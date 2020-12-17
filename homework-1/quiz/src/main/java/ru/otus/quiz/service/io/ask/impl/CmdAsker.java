@@ -3,12 +3,19 @@ package ru.otus.quiz.service.io.ask.impl;
 import org.apache.commons.lang3.StringUtils;
 import ru.otus.quiz.service.io.ask.Asker;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
 public class CmdAsker implements Asker {
-    private final Scanner scanner = new Scanner(System.in);
-    private final PrintStream out = System.out;
+    private final Scanner scanner;
+    private final PrintStream out;
+
+    public CmdAsker(InputStream inputStream, OutputStream outputStream) {
+        this.scanner = new Scanner(inputStream);
+        this.out = new PrintStream(outputStream);
+    }
 
     @Override
     public String askNotEmptyString(String message) {

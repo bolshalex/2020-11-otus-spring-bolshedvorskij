@@ -10,8 +10,13 @@
     <bean id="questionService" class="ru.otus.quiz.service.question.impl.QuestionServiceImpl">
         <constructor-arg name="questionDao" ref="questionDao"/>
     </bean>
-    <bean id="asker" class="ru.otus.quiz.service.io.ask.impl.CmdAsker"/>
-    <bean id="printer" class="ru.otus.quiz.service.io.out.impl.CmdPrinter"/>
+    <bean id="asker" class="ru.otus.quiz.service.io.ask.impl.CmdAsker">
+        <constructor-arg name="inputStream" value="#{ T(java.lang.System).in}"/>
+        <constructor-arg name="outputStream" value="#{ T(java.lang.System).out}"/>
+    </bean>
+    <bean id="printer" class="ru.otus.quiz.service.io.out.impl.CmdPrinter">
+        <constructor-arg name="outputStream" value="#{ T(java.lang.System).out}"/>
+    </bean>
 
     <bean id="playerDao" class="ru.otus.quiz.dao.player.impl.CmdPlayerDao">
         <constructor-arg name="asker" ref="asker"/>
