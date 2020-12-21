@@ -4,7 +4,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
 import ru.otus.quiz.dao.question.QuestionDao;
 import ru.otus.quiz.dao.question.exception.QuestionDaoException;
 import ru.otus.quiz.domain.model.Question;
@@ -16,11 +18,12 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class QuestionDaoCsv implements QuestionDao {
     private final String questionFilePath;
     private final CsvQuestionParser csvQuestionParser = new CsvQuestionParser();
 
-    public QuestionDaoCsv(String questionFilePath) {
+    public QuestionDaoCsv(@Value("${quizProperty.questionPath}") String questionFilePath) {
         this.questionFilePath = questionFilePath;
     }
 

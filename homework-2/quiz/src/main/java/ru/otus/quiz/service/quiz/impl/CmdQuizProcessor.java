@@ -1,5 +1,7 @@
 package ru.otus.quiz.service.quiz.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.otus.quiz.domain.io.ask.Asker;
 import ru.otus.quiz.domain.model.Player;
 import ru.otus.quiz.domain.model.PlayerAnswer;
@@ -15,11 +17,13 @@ import ru.otus.quiz.service.quiz.exception.QuizServiceException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class CmdQuizProcessor implements QuizProcessor {
     private final QuestionService questionService;
     private final PlayerService playerService;
     private final Asker asker;
 
+    @Autowired
     public CmdQuizProcessor(QuestionService questionService, PlayerService playerService, Asker asker) {
         this.questionService = questionService;
         this.playerService = playerService;
