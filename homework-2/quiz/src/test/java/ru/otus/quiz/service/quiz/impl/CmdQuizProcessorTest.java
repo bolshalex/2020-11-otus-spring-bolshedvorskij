@@ -7,10 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.otus.quiz.model.Player;
-import ru.otus.quiz.model.PlayerAnswer;
-import ru.otus.quiz.model.Question;
-import ru.otus.quiz.service.io.ask.Asker;
+import ru.otus.quiz.domain.io.ask.Asker;
+import ru.otus.quiz.domain.model.Player;
+import ru.otus.quiz.domain.model.PlayerAnswer;
+import ru.otus.quiz.domain.model.PlayerAnswers;
+import ru.otus.quiz.domain.model.Question;
 import ru.otus.quiz.service.player.PlayerService;
 import ru.otus.quiz.service.player.exception.PlayerServiceException;
 import ru.otus.quiz.service.question.QuestionService;
@@ -18,9 +19,7 @@ import ru.otus.quiz.service.quiz.QuizProcessor;
 import ru.otus.quiz.service.quiz.exception.QuizServiceException;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -47,9 +46,9 @@ class CmdQuizProcessorTest {
     @Test
     void quizProcess() throws QuizServiceException {
         QuizProcessor quizProcessor = new CmdQuizProcessor(questionService, playerService, asker);
-        Map<Player, List<PlayerAnswer>> playerAnswers = quizProcessor.quizProcess();
+        PlayerAnswers playerAnswers = quizProcessor.quizProcess();
 
-        Map<Player, List<PlayerAnswer>> expectedPlayerAnswers = getExpectedPlayerAnswers();
+        PlayerAnswers expectedPlayerAnswers = getExpectedPlayerAnswers();
         Assertions.assertThat(playerAnswers).isEqualTo(expectedPlayerAnswers);
     }
 
@@ -68,15 +67,13 @@ class CmdQuizProcessorTest {
                 2));
     }
 
-    private Map<Player, List<PlayerAnswer>> getExpectedPlayerAnswers() {
+    private PlayerAnswers getExpectedPlayerAnswers() {
         Player player = new Player("Player1");
         Question question = new Question("In which year was The Godfather first released?",
                 Arrays.asList("1933", "1972", "1990"),
                 2);
 
         List<PlayerAnswer> answers = Arrays.asList(new PlayerAnswer(question, 2));
-        Map<Player, List<PlayerAnswer>> playerAnswers = new HashMap<>();
-        playerAnswers.put(player, answers);
-        return playerAnswers;
+        return new PlayerAnswers(player, answers);
     }
 }

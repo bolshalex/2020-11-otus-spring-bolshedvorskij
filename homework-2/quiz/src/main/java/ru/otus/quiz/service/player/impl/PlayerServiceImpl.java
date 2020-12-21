@@ -1,24 +1,19 @@
 package ru.otus.quiz.service.player.impl;
 
-import ru.otus.quiz.dao.player.PlayerDao;
-import ru.otus.quiz.dao.player.exception.PlayerDaoException;
-import ru.otus.quiz.model.Player;
+import ru.otus.quiz.domain.io.ask.Asker;
+import ru.otus.quiz.domain.model.Player;
 import ru.otus.quiz.service.player.PlayerService;
-import ru.otus.quiz.service.player.exception.PlayerServiceException;
 
 public class PlayerServiceImpl implements PlayerService {
-    private final PlayerDao playerDao;
+    private final Asker asker;
 
-    public PlayerServiceImpl(PlayerDao playerDao) {
-        this.playerDao = playerDao;
+    public PlayerServiceImpl(Asker asker) {
+        this.asker = asker;
     }
 
     @Override
-    public Player getPlayer() throws PlayerServiceException {
-        try {
-            return playerDao.getPlayer();
-        } catch (PlayerDaoException e) {
-            throw new PlayerServiceException(e);
-        }
+    public Player getPlayer() {
+        String name = asker.askNotEmptyString("Enter your name. The name must not be empty");
+        return new Player(name);
     }
 }

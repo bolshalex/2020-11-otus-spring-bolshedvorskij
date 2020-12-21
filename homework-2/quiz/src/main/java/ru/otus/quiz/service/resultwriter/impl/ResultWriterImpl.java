@@ -1,15 +1,13 @@
 package ru.otus.quiz.service.resultwriter.impl;
 
-import ru.otus.quiz.model.Player;
-import ru.otus.quiz.model.QuizResult;
-import ru.otus.quiz.service.io.out.Printer;
+import ru.otus.quiz.domain.io.out.Printer;
+import ru.otus.quiz.domain.model.Player;
+import ru.otus.quiz.domain.model.QuizResult;
 import ru.otus.quiz.service.resultwriter.ResultWriter;
 
-import java.util.Map;
-
 public class ResultWriterImpl implements ResultWriter {
-    private static final String TEST_SUCCESSFUL = "%s, тест пройден. Количество правильных ответов: %d";
-    private static final String TEST_FAIL = "%s, тест не пройден. Количество правильных ответов: %d";
+    private static final String TEST_SUCCESSFUL = "%s, test is successful. Number of correct answers: %d";
+    private static final String TEST_FAIL = "%s, test failed. Number of correct answers: %d";
 
     private final Printer printer;
 
@@ -18,14 +16,13 @@ public class ResultWriterImpl implements ResultWriter {
     }
 
     @Override
-    public void writeResult(Map<Player, QuizResult> playerResult) {
+    public void writeResult(QuizResult playerResult) {
 
-        for (Map.Entry<Player, QuizResult> playerQuizResultEntry : playerResult.entrySet()) {
-            Player player = playerQuizResultEntry.getKey();
-            QuizResult quizResult = playerQuizResultEntry.getValue();
-            String template = quizResult.isSuccessful() ? TEST_SUCCESSFUL : TEST_FAIL;
-            String stringResult = String.format(template, player.getName(), quizResult.getCountRightAnswers());
-            printer.print(stringResult);
-        }
+
+        Player player = playerResult.getPlayer();
+        String template = playerResult.isSuccessful() ? TEST_SUCCESSFUL : TEST_FAIL;
+        String stringResult = String.format(template, player.getName(), playerResult.getCountRightAnswers());
+        printer.print(stringResult);
     }
+
 }

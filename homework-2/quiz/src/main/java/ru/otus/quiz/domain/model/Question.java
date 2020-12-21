@@ -1,4 +1,4 @@
-package ru.otus.quiz.model;
+package ru.otus.quiz.domain.model;
 
 import lombok.*;
 

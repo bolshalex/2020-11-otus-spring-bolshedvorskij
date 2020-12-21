@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
 import ru.otus.quiz.dao.question.QuestionDao;
 import ru.otus.quiz.dao.question.exception.QuestionDaoException;
-import ru.otus.quiz.model.Question;
+import ru.otus.quiz.domain.model.Question;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class QuestionDaoCsv implements QuestionDao {
     @NonNull
     public List<Question> getQuestions() throws QuestionDaoException {
         if (StringUtils.isEmpty(questionFilePath)) {
-            throw new QuestionDaoException("Не указан путь до ресурса с вопросами");
+            throw new QuestionDaoException("Path to questions isn't specified");
         }
 
         List<Question> questions = new ArrayList<>();

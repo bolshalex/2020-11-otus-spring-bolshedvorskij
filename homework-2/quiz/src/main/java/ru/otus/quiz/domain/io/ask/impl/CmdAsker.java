@@ -1,27 +1,26 @@
-package ru.otus.quiz.service.io.ask.impl;
+package ru.otus.quiz.domain.io.ask.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import ru.otus.quiz.service.io.ask.Asker;
+import ru.otus.quiz.domain.io.ask.Asker;
+import ru.otus.quiz.domain.io.out.Printer;
 
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Scanner;
 
 public class CmdAsker implements Asker {
     private final Scanner scanner;
-    private final PrintStream out;
+    private final Printer printer;
 
-    public CmdAsker(InputStream inputStream, OutputStream outputStream) {
+    public CmdAsker(InputStream inputStream, Printer printer) {
         this.scanner = new Scanner(inputStream);
-        this.out = new PrintStream(outputStream);
+        this.printer = printer;
     }
 
     @Override
     public String askNotEmptyString(String message) {
         String stringAnswer = null;
         do {
-            out.println(message);
+            printer.print(message);
             if (scanner.hasNextLine()) {
                 stringAnswer = scanner.nextLine();
             }
@@ -32,7 +31,7 @@ public class CmdAsker implements Asker {
 
     @Override
     public int askInteger(String message) {
-        out.println(message);
+        printer.print(message);
         return scanner.nextInt();
     }
 }

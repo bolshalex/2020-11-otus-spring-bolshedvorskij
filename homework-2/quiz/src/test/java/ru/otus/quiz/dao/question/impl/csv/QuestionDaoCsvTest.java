@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.otus.quiz.dao.question.QuestionDao;
 import ru.otus.quiz.dao.question.exception.QuestionDaoException;
-import ru.otus.quiz.model.Question;
+import ru.otus.quiz.domain.model.Question;
 
 import java.util.ArrayList;
 import java.util.Arrays;

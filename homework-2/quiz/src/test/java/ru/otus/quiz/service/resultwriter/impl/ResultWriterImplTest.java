@@ -5,20 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.otus.quiz.model.Player;
-import ru.otus.quiz.model.QuizResult;
-import ru.otus.quiz.service.io.out.Printer;
+import ru.otus.quiz.domain.io.out.Printer;
+import ru.otus.quiz.domain.model.Player;
+import ru.otus.quiz.domain.model.QuizResult;
 import ru.otus.quiz.service.resultwriter.ResultWriter;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
 class ResultWriterImplTest {
@@ -37,11 +30,8 @@ class ResultWriterImplTest {
         Assertions.assertThat(result).isEqualTo(expectedResult);
     }
 
-    private Map<Player, QuizResult> getPlayerQuizResult() {
+    private QuizResult getPlayerQuizResult() {
         Player player = new Player("Player1");
-        QuizResult quizResult = new QuizResult(1, true);
-        Map<Player, QuizResult> playerQuizResult = new HashMap<>();
-        playerQuizResult.put(player, quizResult);
-        return playerQuizResult;
+        return new QuizResult(player, 1, true);
     }
 }

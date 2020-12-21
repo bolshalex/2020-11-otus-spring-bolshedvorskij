@@ -1,8 +1,6 @@
-package ru.otus.quiz.model;
+package ru.otus.quiz.domain.model;
 
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class PlayerAnswer {

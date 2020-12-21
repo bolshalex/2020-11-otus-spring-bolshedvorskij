@@ -5,13 +5,12 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.otus.quiz.model.Player;
-import ru.otus.quiz.model.PlayerAnswer;
-import ru.otus.quiz.model.Question;
-import ru.otus.quiz.model.QuizResult;
+import ru.otus.quiz.domain.model.*;
 import ru.otus.quiz.service.result.ResultCalculationService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -21,18 +20,16 @@ class ResultCalculationServiceImplTest {
     @MethodSource("provideTestData")
     void testQuizResult(String testName,
                         int requiredCorrectedAnswers,
-                        Map<Player, QuizResult> expectedPlayerQuizResult) {
+                        QuizResult expectedPlayerQuizResult) {
 
         ResultCalculationService resultCalculationService = new ResultCalculationServiceImpl(requiredCorrectedAnswers);
-        Map<Player, QuizResult> playerQuizResult = resultCalculationService.calcResult(getPlayerAnswers());
+        QuizResult playerQuizResult = resultCalculationService.calcResult(getPlayerAnswers());
         Assertions.assertThat(playerQuizResult).isEqualTo(expectedPlayerQuizResult);
     }
 
-    private Map<Player, List<PlayerAnswer>> getPlayerAnswers() {
+    private PlayerAnswers getPlayerAnswers() {
         Player player = new Player("Player1");
-        Map<Player, List<PlayerAnswer>> playerAnswers = new HashMap<>();
-        playerAnswers.put(player, getAnswers());
-        return playerAnswers;
+        return new PlayerAnswers(player, getAnswers());
     }
 
     private Stream<Arguments> provideTestData() {
@@ -57,19 +54,13 @@ class ResultCalculationServiceImplTest {
         return answers;
     }
 
-    private Map<Player, QuizResult> getSuccessfulPlayerResult() {
+    private QuizResult getSuccessfulPlayerResult() {
         Player player = new Player("Player1");
-        QuizResult quizResult = new QuizResult(1, true);
-        Map<Player, QuizResult> playerQuizResult = new HashMap<>();
-        playerQuizResult.put(player, quizResult);
-        return playerQuizResult;
+        return new QuizResult(player, 1, true);
     }
 
-    private Map<Player, QuizResult> getFailPlayerResult() {
+    private QuizResult getFailPlayerResult() {
         Player player = new Player("Player1");
-        QuizResult quizResult = new QuizResult(1, false);
-        Map<Player, QuizResult> playerQuizResult = new HashMap<>();
-        playerQuizResult.put(player, quizResult);
-        return playerQuizResult;
+        return new QuizResult(player, 1, false);
     }
 }

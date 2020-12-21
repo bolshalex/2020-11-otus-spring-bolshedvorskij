@@ -1,6 +1,6 @@
-package ru.otus.quiz.service.io.out.impl;
+package ru.otus.quiz.domain.io.out.impl;
 
-import ru.otus.quiz.service.io.out.Printer;
+import ru.otus.quiz.domain.io.out.Printer;
 
 import java.io.OutputStream;
 import java.io.PrintStream;

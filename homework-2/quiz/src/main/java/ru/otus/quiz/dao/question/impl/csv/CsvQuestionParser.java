@@ -2,7 +2,7 @@ package ru.otus.quiz.dao.question.impl.csv;
 
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
-import ru.otus.quiz.model.Question;
+import ru.otus.quiz.domain.model.Question;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +13,11 @@ public class CsvQuestionParser {
     public Question parseCsvRecord(CSVRecord csvRecord) {
         this.csvRecord = csvRecord;
 
-        Question question = Question.builder()
+        return Question.builder()
                 .question(csvRecord.get(CsvHeaders.QUESTION))
                 .answerVariants(parseStringList(CsvHeaders.ANSWER_VARIANTS))
                 .correctAnswer(parseInt(CsvHeaders.CORRECT_ANSWER))
                 .build();
-
-
-        return question;
     }
 
     private List<String> parseStringList(String header) {
