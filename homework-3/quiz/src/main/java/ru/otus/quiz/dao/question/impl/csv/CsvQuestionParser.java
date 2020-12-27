@@ -2,11 +2,13 @@ package ru.otus.quiz.dao.question.impl.csv;
 
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 import ru.otus.quiz.domain.model.Question;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class CsvQuestionParser {
     private CSVRecord csvRecord;
 

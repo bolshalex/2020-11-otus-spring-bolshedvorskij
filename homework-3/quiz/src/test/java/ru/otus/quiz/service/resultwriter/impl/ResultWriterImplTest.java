@@ -26,7 +26,7 @@ class ResultWriterImplTest {
         ResultWriter resultWriter = new ResultWriterImpl(printer);
         resultWriter.writeResult(getPlayerQuizResult());
         String result = valueCapture.getValue();
-        String expectedResult = "Player1, тест пройден. Количество правильных ответов: 1";
+        String expectedResult = "Player1, test is successful. Number of correct answers: 1";
         Assertions.assertThat(result).isEqualTo(expectedResult);
     }
 

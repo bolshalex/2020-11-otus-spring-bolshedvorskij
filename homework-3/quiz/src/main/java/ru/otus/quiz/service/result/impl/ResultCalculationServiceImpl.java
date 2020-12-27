@@ -28,7 +28,7 @@ public class ResultCalculationServiceImpl implements ResultCalculationService {
         }
         return new QuizResult(playerAnswers.getPlayer(),
                 countPlayerCorrectAnswer,
-                countPlayerCorrectAnswer == countCorrectAnswers);
+                countPlayerCorrectAnswer >= countCorrectAnswers);
     }
 
 
