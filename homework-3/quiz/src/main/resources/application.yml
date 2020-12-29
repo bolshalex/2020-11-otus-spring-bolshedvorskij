@@ -1,0 +1,8 @@
+quiz:
+  countCorrectAnswers: 4
+  locale: en
+
+spring:
+  output:
+    ansi:
+      enabled: ALWAYS
