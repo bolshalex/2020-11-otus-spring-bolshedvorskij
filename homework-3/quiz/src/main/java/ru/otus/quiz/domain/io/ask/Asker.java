@@ -5,4 +5,6 @@ public interface Asker {
     String askNotEmptyString(String message);
 
     int askInteger(String message);
+
+    int askInteger(String message, AnswerValidator<Integer> validator);
 }
