@@ -69,10 +69,12 @@ public class CmdQuizProcessor implements QuizProcessor {
     private PlayerAnswer askQuestion(Question question) {
         List<String> variants = question.getAnswerVariants();
 
-        int answer = asker.askInteger(buildQuestionString(question));
-        while (answer < 0 || answer > variants.size()) {
-            answer = asker.askInteger("Invalid response number. try again");
-        }
+        int answer = asker.askInteger(buildQuestionString(question),
+                userAnswer -> {
+                    int intValue = userAnswer;
+                    return intValue > 0 && intValue <= variants.size();
+                });
+
         return new PlayerAnswer(question, answer);
     }
 

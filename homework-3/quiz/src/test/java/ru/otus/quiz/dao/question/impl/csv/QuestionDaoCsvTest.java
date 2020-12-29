@@ -2,9 +2,11 @@ package ru.otus.quiz.dao.question.impl.csv;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import ru.otus.quiz.dao.question.QuestionResourcePathProvider;
+import ru.otus.quiz.config.QuizProperty;
 import ru.otus.quiz.dao.question.QuestionDao;
 import ru.otus.quiz.dao.question.exception.QuestionDaoException;
 import ru.otus.quiz.domain.model.Question;
@@ -17,25 +19,33 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class QuestionDaoCsvTest {
     private static final String TEST_QUESTION_PATH = "/ru/otus/quiz/dao/question/quiz.csv";
-    @Mock
+    @MockBean
     private CsvQuestionParser csvQuestionParser;
+    @MockBean
+    private QuestionResourcePathProvider questionResourcePathProvider;
+
+    @Autowired
+    private QuestionDao questionDao;
 
     @Test
     void getQuestions() throws QuestionDaoException {
         when(csvQuestionParser.parseCsvRecord(any())).thenCallRealMethod();
-        QuestionDao questionDao = new QuestionDaoCsv(TEST_QUESTION_PATH, csvQuestionParser);
-        List<Question> questions = questionDao.getQuestions();
+        when(questionResourcePathProvider.getQuestionResourcePath()).thenReturn(TEST_QUESTION_PATH);
 
+        List<Question> actualQuestions = questionDao.getQuestions();
         List<Question> expectedQuestions = getExpectedQuestions();
-        Assertions.assertThat(questions).isEqualTo(expectedQuestions);
+        Assertions.assertThat(actualQuestions).isEqualTo(expectedQuestions);
     }
 
     @Test
     void testThrowException() {
-        QuestionDao questionDao = new QuestionDaoCsv("", csvQuestionParser);
+        QuizProperty quizProperty = new QuizProperty();
+        quizProperty.setCountCorrectAnswers(1);
+
+        QuestionDao questionDao = new QuestionDaoCsv(questionResourcePathProvider, csvQuestionParser);
         assertThrows(QuestionDaoException.class, () -> questionDao.getQuestions());
     }
 

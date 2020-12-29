@@ -5,6 +5,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.otus.quiz.config.QuizProperty;
 import ru.otus.quiz.domain.model.*;
 import ru.otus.quiz.service.result.ResultCalculationService;
 
@@ -22,7 +23,9 @@ class ResultCalculationServiceImplTest {
                         int requiredCorrectedAnswers,
                         QuizResult expectedPlayerQuizResult) {
 
-        ResultCalculationService resultCalculationService = new ResultCalculationServiceImpl(requiredCorrectedAnswers);
+        QuizProperty quizProperty = new QuizProperty();
+        quizProperty.setCountCorrectAnswers(requiredCorrectedAnswers);
+        ResultCalculationService resultCalculationService = new ResultCalculationServiceImpl(quizProperty);
         QuizResult playerQuizResult = resultCalculationService.calcResult(getPlayerAnswers());
         Assertions.assertThat(playerQuizResult).isEqualTo(expectedPlayerQuizResult);
     }

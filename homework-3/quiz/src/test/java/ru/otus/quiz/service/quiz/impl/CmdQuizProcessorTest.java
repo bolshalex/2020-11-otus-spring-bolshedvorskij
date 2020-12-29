@@ -4,9 +4,10 @@ import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import ru.otus.quiz.domain.io.ask.AnswerValidator;
 import ru.otus.quiz.domain.io.ask.Asker;
 import ru.otus.quiz.domain.model.Player;
 import ru.otus.quiz.domain.model.PlayerAnswer;
@@ -22,30 +23,33 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class CmdQuizProcessorTest {
 
-    @Mock
+    @MockBean
     private QuestionService questionService;
-    @Mock
+    @MockBean
     private PlayerService playerService;
-    @Mock
+    @MockBean
     private Asker asker;
+    @Autowired
+    private QuizProcessor quizProcessor;
 
     @BeforeEach
     void setUp() throws Exception {
         lenient().when(questionService.getQuestions()).thenReturn(getQuestions());
         lenient().when(playerService.getPlayer()).thenReturn(new Player("Player1"));
-        lenient().when(asker.askInteger(anyString())).thenReturn(2);
+        lenient().when(asker.askInteger(anyString(),
+                any(AnswerValidator.class))).thenReturn(2);
     }
 
     @Test
     void quizProcess() throws QuizServiceException {
-        QuizProcessor quizProcessor = new CmdQuizProcessor(questionService, playerService, asker);
         PlayerAnswers playerAnswers = quizProcessor.quizProcess();
 
         PlayerAnswers expectedPlayerAnswers = getExpectedPlayerAnswers();
@@ -56,7 +60,6 @@ class CmdQuizProcessorTest {
     @Test
     void testThrowException() {
         when(playerService.getPlayer()).thenThrow(new PlayerServiceException());
-        QuizProcessor quizProcessor = new CmdQuizProcessor(questionService, playerService, asker);
         assertThrows(QuizServiceException.class, () -> quizProcessor.quizProcess());
     }
 

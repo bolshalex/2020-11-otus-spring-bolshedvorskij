@@ -1,19 +1,17 @@
 package ru.otus.quiz;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
+import ru.otus.quiz.config.QuizProperty;
 import ru.otus.quiz.service.application.ApplicationRunner;
 
-@PropertySource("classpath:application.properties")
-@ComponentScan
+@SpringBootApplication
+@EnableConfigurationProperties(QuizProperty.class)
 public class QuizApplication {
-
-
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext(QuizApplication.class);
-
+        ApplicationContext context = SpringApplication.run(QuizApplication.class, args);
         ApplicationRunner applicationRunner = context.getBean(ApplicationRunner.class);
         applicationRunner.run();
     }

@@ -1,8 +1,8 @@
 package ru.otus.quiz.service.result.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.otus.quiz.config.QuizProperty;
 import ru.otus.quiz.domain.model.PlayerAnswer;
 import ru.otus.quiz.domain.model.PlayerAnswers;
 import ru.otus.quiz.domain.model.QuizResult;
@@ -13,8 +13,8 @@ public class ResultCalculationServiceImpl implements ResultCalculationService {
     private final int countCorrectAnswers;
 
     @Autowired
-    public ResultCalculationServiceImpl(@Value("${quizProperty.countCorrectAnswers}") int countCorrectAnswers) {
-        this.countCorrectAnswers = countCorrectAnswers;
+    public ResultCalculationServiceImpl(QuizProperty quizProperty) {
+        this.countCorrectAnswers = quizProperty.getCountCorrectAnswers();
     }
 
     @Override
