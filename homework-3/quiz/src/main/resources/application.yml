@@ -3,6 +3,6 @@ quiz:
   locale: en
 
 spring:
-  output:
-    ansi:
-      enabled: ALWAYS
+  messages:
+    basename: "i18n/messages/messages"
+    fallback-to-system-locale: false
