@@ -9,14 +9,16 @@ import java.util.Locale;
 @Component
 public class QuestionResourcePathProvider {
 
-    private Locale locale;
+    private final Locale locale;
+    private final String baseName;
 
     @Autowired
     public QuestionResourcePathProvider(QuizProperty quizProperty) {
         this.locale = quizProperty.getLocale();
+        this.baseName = quizProperty.getQuestionBasename() + "_%s%s";
     }
 
     public String getQuestionResourcePath() {
-        return String.format("/i18n/quiz/quiz_%s%s", locale.toString(), ".csv");
+        return String.format(baseName, locale.toString(), ".csv");
     }
 }

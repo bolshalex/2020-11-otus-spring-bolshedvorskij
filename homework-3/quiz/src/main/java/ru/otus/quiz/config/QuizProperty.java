@@ -14,4 +14,5 @@ import java.util.Locale;
 public class QuizProperty {
     private Locale locale;
     private int countCorrectAnswers;
+    private String questionBasename;
 }

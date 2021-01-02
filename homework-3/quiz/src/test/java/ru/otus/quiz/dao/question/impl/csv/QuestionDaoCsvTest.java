@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.otus.quiz.dao.question.QuestionResourcePathProvider;
 import ru.otus.quiz.config.QuizProperty;
 import ru.otus.quiz.dao.question.QuestionDao;
+import ru.otus.quiz.dao.question.QuestionResourcePathProvider;
 import ru.otus.quiz.dao.question.exception.QuestionDaoException;
 import ru.otus.quiz.domain.model.Question;
 
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class QuestionDaoCsvTest {
-    private static final String TEST_QUESTION_PATH = "/ru/otus/quiz/dao/question/quiz.csv";
+    private static final String TEST_QUESTION_PATH = "/dao/quiz.csv";
     @MockBean
     private CsvQuestionParser csvQuestionParser;
     @MockBean
@@ -46,7 +46,7 @@ class QuestionDaoCsvTest {
         quizProperty.setCountCorrectAnswers(1);
 
         QuestionDao questionDao = new QuestionDaoCsv(questionResourcePathProvider, csvQuestionParser);
-        assertThrows(QuestionDaoException.class, () -> questionDao.getQuestions());
+        assertThrows(QuestionDaoException.class, questionDao::getQuestions);
     }
 
     private List<Question> getExpectedQuestions() {

@@ -2,7 +2,7 @@ package ru.otus.quiz.service.quiz.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.otus.quiz.domain.io.ask.Asker;
+import ru.otus.quiz.domain.io.LocalizedIoService;
 import ru.otus.quiz.domain.model.Player;
 import ru.otus.quiz.domain.model.PlayerAnswer;
 import ru.otus.quiz.domain.model.PlayerAnswers;
@@ -21,13 +21,15 @@ import java.util.List;
 public class CmdQuizProcessor implements QuizProcessor {
     private final QuestionService questionService;
     private final PlayerService playerService;
-    private final Asker asker;
+    private final LocalizedIoService localizedIoService;
 
     @Autowired
-    public CmdQuizProcessor(QuestionService questionService, PlayerService playerService, Asker asker) {
+    public CmdQuizProcessor(QuestionService questionService,
+                            PlayerService playerService,
+                            LocalizedIoService localizedIoService) {
         this.questionService = questionService;
         this.playerService = playerService;
-        this.asker = asker;
+        this.localizedIoService = localizedIoService;
     }
 
     @Override
@@ -69,7 +71,7 @@ public class CmdQuizProcessor implements QuizProcessor {
     private PlayerAnswer askQuestion(Question question) {
         List<String> variants = question.getAnswerVariants();
 
-        int answer = asker.askInteger(buildQuestionString(question),
+        int answer = localizedIoService.askInteger(buildQuestionString(question),
                 userAnswer -> {
                     int intValue = userAnswer;
                     return intValue > 0 && intValue <= variants.size();

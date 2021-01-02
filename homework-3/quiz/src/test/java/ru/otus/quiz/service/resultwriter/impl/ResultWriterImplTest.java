@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.quiz.domain.LocalizedMessageProvider;
-import ru.otus.quiz.domain.io.out.Printer;
+import ru.otus.quiz.domain.io.IoService;
 import ru.otus.quiz.domain.model.Player;
 import ru.otus.quiz.domain.model.QuizResult;
 import ru.otus.quiz.service.resultwriter.ResultWriter;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 class ResultWriterImplTest {
 
     @MockBean
-    private Printer printer;
+    private IoService ioService;
     @MockBean
     private LocalizedMessageProvider messageProvider;
     @Autowired
@@ -33,7 +33,7 @@ class ResultWriterImplTest {
                 .thenReturn("Player1, test is successful. Number of correct answers: 1");
 
         ArgumentCaptor<String> valueCapture = ArgumentCaptor.forClass(String.class);
-        doNothing().when(printer).print(valueCapture.capture());
+        doNothing().when(ioService).print(valueCapture.capture());
 
         resultWriter.writeResult(getPlayerQuizResult());
         String result = valueCapture.getValue();

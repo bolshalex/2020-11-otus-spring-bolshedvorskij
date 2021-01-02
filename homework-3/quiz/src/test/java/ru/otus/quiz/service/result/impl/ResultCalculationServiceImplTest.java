@@ -1,7 +1,6 @@
 package ru.otus.quiz.service.result.impl;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -14,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ResultCalculationServiceImplTest {
 
     @ParameterizedTest(name = "{0}")
@@ -35,7 +33,7 @@ class ResultCalculationServiceImplTest {
         return new PlayerAnswers(player, getAnswers());
     }
 
-    private Stream<Arguments> provideTestData() {
+    private static Stream<Arguments> provideTestData() {
         return Stream.of(
                 Arguments.of("Test successful quiz", 1, getSuccessfulPlayerResult()),
                 Arguments.of("Test fail quiz", 2, getFailPlayerResult())
@@ -57,12 +55,12 @@ class ResultCalculationServiceImplTest {
         return answers;
     }
 
-    private QuizResult getSuccessfulPlayerResult() {
+    private static QuizResult getSuccessfulPlayerResult() {
         Player player = new Player("Player1");
         return new QuizResult(player, 1, true);
     }
 
-    private QuizResult getFailPlayerResult() {
+    private static QuizResult getFailPlayerResult() {
         Player player = new Player("Player1");
         return new QuizResult(player, 1, false);
     }

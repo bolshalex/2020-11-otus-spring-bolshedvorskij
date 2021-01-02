@@ -1,6 +1,7 @@
 quiz:
   countCorrectAnswers: 4
   locale: en
+  questionBasename: "/i18n/quiz/questions"
 
 spring:
   messages:

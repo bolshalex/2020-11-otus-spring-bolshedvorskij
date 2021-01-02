@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.otus.quiz.domain.io.ask.AnswerValidator;
-import ru.otus.quiz.domain.io.ask.Asker;
+import ru.otus.quiz.domain.io.AnswerValidator;
+import ru.otus.quiz.domain.io.IoService;
 import ru.otus.quiz.domain.model.Player;
 import ru.otus.quiz.domain.model.PlayerAnswer;
 import ru.otus.quiz.domain.model.PlayerAnswers;
@@ -20,6 +20,7 @@ import ru.otus.quiz.service.quiz.QuizProcessor;
 import ru.otus.quiz.service.quiz.exception.QuizServiceException;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -36,7 +37,7 @@ class CmdQuizProcessorTest {
     @MockBean
     private PlayerService playerService;
     @MockBean
-    private Asker asker;
+    private IoService ioService;
     @Autowired
     private QuizProcessor quizProcessor;
 
@@ -44,8 +45,8 @@ class CmdQuizProcessorTest {
     void setUp() throws Exception {
         lenient().when(questionService.getQuestions()).thenReturn(getQuestions());
         lenient().when(playerService.getPlayer()).thenReturn(new Player("Player1"));
-        lenient().when(asker.askInteger(anyString(),
-                any(AnswerValidator.class))).thenReturn(2);
+        lenient().when(ioService.askInteger(anyString(),
+                any(AnswerValidator.class), anyString())).thenReturn(2);
     }
 
     @Test
@@ -65,7 +66,7 @@ class CmdQuizProcessorTest {
 
     private List<Question> getQuestions() {
 
-        return Arrays.asList(new Question("In which year was The Godfather first released?",
+        return Collections.singletonList(new Question("In which year was The Godfather first released?",
                 Arrays.asList("1933", "1972", "1990"),
                 2));
     }
@@ -76,7 +77,7 @@ class CmdQuizProcessorTest {
                 Arrays.asList("1933", "1972", "1990"),
                 2);
 
-        List<PlayerAnswer> answers = Arrays.asList(new PlayerAnswer(question, 2));
+        List<PlayerAnswer> answers = Collections.singletonList(new PlayerAnswer(question, 2));
         return new PlayerAnswers(player, answers);
     }
 }

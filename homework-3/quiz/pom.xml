@@ -15,21 +15,17 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <spring-version>5.3.1</spring-version>
         <apache-csv-version>1.8</apache-csv-version>
         <lombok-version>1.18.12</lombok-version>
         <commons-collections-version>4.4</commons-collections-version>
         <commons-lang-version>3.9</commons-lang-version>
 
-        <mockito-version>3.6.0</mockito-version>
-        <junit-jupiter-version>5.7.0</junit-jupiter-version>
         <assertj-core-version>3.18.1</assertj-core-version>
 
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.source>11</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
-        <maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
         <minimal.maven.version>3.3.9</minimal.maven.version>
     </properties>
 

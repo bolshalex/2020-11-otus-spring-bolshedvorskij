@@ -14,10 +14,11 @@ class QuestionResourcePathProviderTest {
     void getQuestionResourcePath() {
         QuizProperty quizProperty = new QuizProperty();
         quizProperty.setLocale(new Locale("ru"));
+        quizProperty.setQuestionBasename("/i18n/quiz/questions");
         QuestionResourcePathProvider questionResourcePathProvider = new QuestionResourcePathProvider(quizProperty);
 
         String actualPath = questionResourcePathProvider.getQuestionResourcePath();
-        String expectedPath = "/i18n/quiz/quiz_ru.csv";
+        String expectedPath = "/i18n/quiz/questions_ru.csv";
         Assertions.assertThat(actualPath).isEqualTo(expectedPath);
     }
 }
