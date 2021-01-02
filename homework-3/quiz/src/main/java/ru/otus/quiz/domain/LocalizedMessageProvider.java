@@ -9,8 +9,8 @@ import java.util.Locale;
 
 @Component
 public class LocalizedMessageProvider {
-    private Locale locale;
-    private MessageSource messageSource;
+    private final Locale locale;
+    private final MessageSource messageSource;
 
     @Autowired
     public LocalizedMessageProvider(MessageSource messageSource, QuizProperty quizProperty) {

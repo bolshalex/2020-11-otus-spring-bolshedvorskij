@@ -1,4 +1,4 @@
-package ru.otus.quiz.domain.io.ask;
+package ru.otus.quiz.domain.io;
 
 public interface AnswerValidator<T> {
 
