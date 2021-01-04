@@ -7,3 +7,6 @@ spring:
   messages:
     basename: "i18n/messages/messages"
     fallback-to-system-locale: false
+  output:
+    ansi:
+      enabled: always
