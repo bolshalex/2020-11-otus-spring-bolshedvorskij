@@ -1,0 +1,12 @@
+quiz:
+  countCorrectAnswers: 4
+  locale: en
+  questionBasename: "/i18n/quiz/questions"
+
+spring:
+  messages:
+    basename: "i18n/messages/messages"
+    fallback-to-system-locale: false
+  output:
+    ansi:
+      enabled: always
