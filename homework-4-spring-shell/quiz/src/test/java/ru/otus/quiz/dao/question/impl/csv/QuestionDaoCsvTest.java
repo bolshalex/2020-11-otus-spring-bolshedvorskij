@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import ru.otus.quiz.config.QuizProperty;
 import ru.otus.quiz.dao.question.QuestionDao;
 import ru.otus.quiz.dao.question.QuestionResourcePathProvider;
@@ -56,5 +58,11 @@ class QuestionDaoCsvTest {
                 2);
         questions.add(question);
         return questions;
+    }
+
+    @ComponentScan(basePackageClasses = {QuestionDao.class})
+    @Configuration
+    static class TestConfiguration {
+
     }
 }

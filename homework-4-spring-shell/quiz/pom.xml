@@ -20,6 +20,7 @@
         <lombok-version>1.18.12</lombok-version>
         <commons-collections-version>4.4</commons-collections-version>
         <commons-lang-version>3.9</commons-lang-version>
+        <spring.shell.version>2.0.1.RELEASE</spring.shell.version>
 
         <assertj-core-version>3.18.1</assertj-core-version>
 
@@ -34,6 +35,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.shell</groupId>
+            <artifactId>spring-shell-starter</artifactId>
+            <version>${spring.shell.version}</version>
         </dependency>
 
         <dependency>

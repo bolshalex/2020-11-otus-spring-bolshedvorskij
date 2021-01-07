@@ -5,7 +5,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.otus.quiz.config.QuizProperty;
-import ru.otus.quiz.domain.model.*;
+import ru.otus.quiz.domain.model.PlayerAnswer;
+import ru.otus.quiz.domain.model.Question;
+import ru.otus.quiz.domain.model.QuizResult;
 import ru.otus.quiz.service.result.ResultCalculationService;
 
 import java.util.ArrayList;
@@ -24,14 +26,10 @@ class ResultCalculationServiceImplTest {
         QuizProperty quizProperty = new QuizProperty();
         quizProperty.setCountCorrectAnswers(requiredCorrectedAnswers);
         ResultCalculationService resultCalculationService = new ResultCalculationServiceImpl(quizProperty);
-        QuizResult playerQuizResult = resultCalculationService.calcResult(getPlayerAnswers());
+        QuizResult playerQuizResult = resultCalculationService.calcResult(getAnswers());
         Assertions.assertThat(playerQuizResult).isEqualTo(expectedPlayerQuizResult);
     }
 
-    private PlayerAnswers getPlayerAnswers() {
-        Player player = new Player("Player1");
-        return new PlayerAnswers(player, getAnswers());
-    }
 
     private static Stream<Arguments> provideTestData() {
         return Stream.of(
@@ -56,12 +54,10 @@ class ResultCalculationServiceImplTest {
     }
 
     private static QuizResult getSuccessfulPlayerResult() {
-        Player player = new Player("Player1");
-        return new QuizResult(player, 1, true);
+        return new QuizResult(1, true);
     }
 
     private static QuizResult getFailPlayerResult() {
-        Player player = new Player("Player1");
-        return new QuizResult(player, 1, false);
+        return new QuizResult(1, false);
     }
 }

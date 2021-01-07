@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.otus.quiz.config.QuizProperty;
 import ru.otus.quiz.domain.model.PlayerAnswer;
-import ru.otus.quiz.domain.model.PlayerAnswers;
 import ru.otus.quiz.domain.model.QuizResult;
 import ru.otus.quiz.service.result.ResultCalculationService;
+
+import java.util.List;
 
 @Service
 public class ResultCalculationServiceImpl implements ResultCalculationService {
@@ -18,15 +19,15 @@ public class ResultCalculationServiceImpl implements ResultCalculationService {
     }
 
     @Override
-    public QuizResult calcResult(PlayerAnswers playerAnswers) {
+    public QuizResult calcResult(List<PlayerAnswer> playerAnswers) {
         int countPlayerCorrectAnswer = 0;
-        for (PlayerAnswer answer : playerAnswers.getPlayerAnswers()) {
+        for (PlayerAnswer answer : playerAnswers) {
             int correctAnswer = answer.getQuestion().getCorrectAnswer();
             if (answer.getAnswer() == correctAnswer) {
                 countPlayerCorrectAnswer++;
             }
         }
-        return new QuizResult(playerAnswers.getPlayer(),
+        return new QuizResult(
                 countPlayerCorrectAnswer,
                 countPlayerCorrectAnswer >= countCorrectAnswers);
     }

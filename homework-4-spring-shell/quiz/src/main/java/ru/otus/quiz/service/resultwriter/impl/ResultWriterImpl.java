@@ -18,9 +18,7 @@ public class ResultWriterImpl implements ResultWriter {
     }
 
     @Override
-    public void writeResult(QuizResult playerResult) {
-        Player player = playerResult.getPlayer();
-
+    public void writeResult(Player player, QuizResult playerResult) {
         localizedIoService.printMessage(playerResult.isSuccessful() ? "test.successful" : "test.fail",
                 player.getName(),
                 String.valueOf(playerResult.getCountRightAnswers())
