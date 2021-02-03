@@ -1,8 +1,10 @@
 package ru.otus.library.shell;
 
+import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
+@ShellComponent
 public class AuthorShell {
 
     @ShellMethod(value = "add author", key = {"addAuthor"})

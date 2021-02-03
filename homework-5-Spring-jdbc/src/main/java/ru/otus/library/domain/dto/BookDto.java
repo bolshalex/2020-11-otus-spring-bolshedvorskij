@@ -1,4 +1,4 @@
-package ru.otus.library.domain.entity;
+package ru.otus.library.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Book {
-    private Long id;
-    private String title;
+public class BookDto {
+    private Long bookId;
+    private String bookTitle;
+    private List<AuthorDto> authors;
+    private List<GenreDto> genres;
 }
