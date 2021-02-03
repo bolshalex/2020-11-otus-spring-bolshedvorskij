@@ -12,7 +12,7 @@ create table author_books(id identity primary key,
                           book_id bigint,
                           author_id bigint,
                           constraint fk_book_id foreign key (book_id) references books(id),
-                          constraint fk_author_id foreign key (book_id) references authors(id));
+                          constraint fk_author_id foreign key (author_id) references authors(id));
 
 drop table if exists book_genres;
 create table book_genres(id identity primary key,
