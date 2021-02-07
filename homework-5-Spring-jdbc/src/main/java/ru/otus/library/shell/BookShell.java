@@ -1,5 +1,7 @@
 package ru.otus.library.shell;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -13,6 +15,7 @@ import java.util.List;
 @ShellComponent
 public class BookShell {
     private final BookService bookService;
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @Autowired
     public BookShell(BookService bookService) {
@@ -25,7 +28,7 @@ public class BookShell {
                              @ShellOption(value = {"-a"}, defaultValue = ShellOption.NULL) String authorIds,
                              @ShellOption(value = {"-g"}, defaultValue = ShellOption.NULL) String genreIds) {
         BookDto book = bookService.createBook(title, StringCollection.splitLong(authorIds), StringCollection.splitLong(genreIds));
-        return book.toString();
+        return gson.toJson(book);
     }
 
     @ShellMethod(value = "update book info", key = {"ub", "updateBook"})
@@ -48,20 +51,20 @@ public class BookShell {
 
     @ShellMethod(value = "get book", key = {"getBook"})
     public String getBook(@ShellOption(value = {"-id"}) Long bookId) {
-        BookDto bookDto = bookService.getById(bookId);
-        return bookDto.toString();
+        BookDto book = bookService.getById(bookId);
+        return gson.toJson(book);
     }
 
     @ShellMethod(value = "get author's books", key = {"getAuthorBooks"})
     public String getAuthorBooks(@ShellOption(value = {"-id"}) Long authorId) {
         List<BookDto> books = bookService.getByAuthorId(authorId);
-        return books.toString();
+        return gson.toJson(books);
     }
 
     @ShellMethod(value = "get all books", key = {"getBooks"})
     public String getAllBooks() {
         List<BookDto> books = bookService.getAll();
-        return books.toString();
+        return gson.toJson(books);
     }
 
 

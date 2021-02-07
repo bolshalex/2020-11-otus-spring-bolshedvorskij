@@ -1,5 +1,7 @@
 package ru.otus.library.shell;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -13,6 +15,7 @@ import java.util.List;
 @ShellComponent
 public class AuthorShell {
     private final AuthorService authorService;
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @Autowired
     public AuthorShell(AuthorService authorService) {
@@ -23,7 +26,7 @@ public class AuthorShell {
     public String createAuthor(@ShellOption(value = {"-n", "-name"}) String name,
                                @ShellOption(value = {"-b", "-books"}, defaultValue = ShellOption.NULL) String bookIds) {
         AuthorDto author = authorService.createAuthor(name, StringCollection.splitLong(bookIds));
-        return author.toString();
+        return gson.toJson(author);
     }
 
     @ShellMethod(value = "update author info", key = {"ua", "updateAuthor"})
@@ -43,13 +46,13 @@ public class AuthorShell {
     @ShellMethod(value = "get author", key = {"getAuthor"})
     public String getAuthor(@ShellOption(value = {"-id"}) Long authorId) {
         AuthorDto author = authorService.getAuthor(authorId);
-        return author.toString();
+        return gson.toJson(author);
     }
 
     @ShellMethod(value = "get authors", key = {"getAuthors"})
     public String getAllAuthors() {
         List<AuthorDto> authors = authorService.getAllAuthors();
-        return authors.toString();
+        return gson.toJson(authors);
     }
 
 }
