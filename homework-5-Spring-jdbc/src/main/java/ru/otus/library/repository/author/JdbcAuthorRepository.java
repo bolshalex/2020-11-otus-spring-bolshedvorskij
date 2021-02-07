@@ -63,11 +63,19 @@ public class JdbcAuthorRepository implements AuthorRepository {
     }
 
     @Override
+    public Author getByName(String name) {
+        String sql = "select a.id, a.name from authors a where a.name = :name";
+        MapSqlParameterSource sqlParameters = new MapSqlParameterSource()
+                .addValue("name", name);
+        return jdbcOperations.queryForObject(sql, sqlParameters, new AuthorMapper());
+    }
+
+    @Override
     public List<Author> getByBookId(Long bookId) {
         String sql = "select a.id, a.name from authors a join author_books ab on a.id = ab.author_id " +
-                "where ab.book_id=:book_id";
+                "where ab.book_id= :book_id";
         MapSqlParameterSource sqlParameters = new MapSqlParameterSource()
-                .addValue(":book_id", bookId);
+                .addValue("book_id", bookId);
         return jdbcOperations.query(sql, sqlParameters, new AuthorMapper());
     }
 
@@ -123,6 +131,7 @@ public class JdbcAuthorRepository implements AuthorRepository {
             insetAuthorBook(authorId, book.getId());
         }
     }
+
     private static class AuthorMapper implements RowMapper<Author> {
 
 

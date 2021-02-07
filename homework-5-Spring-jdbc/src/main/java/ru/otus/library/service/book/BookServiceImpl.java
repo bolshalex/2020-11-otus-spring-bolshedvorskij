@@ -1,4 +1,4 @@
-package ru.otus.library.service;
+package ru.otus.library.service.book;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +52,55 @@ public class BookServiceImpl implements BookService {
                 .build();
     }
 
+    @Override
+    public void updateBook(Long bookId, String title, List<Long> authorIds, List<Long> genreIds) {
+        List<Author> authors = new ArrayList<>();
+        for (Long authorId : authorIds) {
+            authors.add(new Author(authorId));
+        }
+
+        List<Genre> genres = new ArrayList<>();
+        for (Long genreId : genreIds) {
+            genres.add(new Genre(genreId));
+        }
+
+        BookInfo bookInfo = BookInfo.builder()
+                .book(new Book(bookId, title))
+                .genres(genres)
+                .authors(authors)
+                .build();
+
+        bookRepository.updateBook(bookInfo);
+    }
+
+    @Override
+    public void deleteBook(Long id) {
+        bookRepository.deleteBook(id);
+    }
+
+    @Override
+    public BookDto getById(Long id) {
+        Book book = bookRepository.getById(id);
+        return BookDto.builder()
+                .bookId(book.getId())
+                .bookTitle(book.getTitle())
+                .authors(loadBookAuthors(book))
+                .genres(loadBookGenres(book))
+                .build();
+    }
+
+    @Override
+    public List<BookDto> getByAuthorId(Long authorId) {
+        List<Book> books = bookRepository.getByAuthorId(authorId);
+        return loadBookInfos(books);
+    }
+
+    @Override
+    public List<BookDto> getAll() {
+        List<Book> books = bookRepository.getAll();
+        return loadBookInfos(books);
+    }
+
     private List<GenreDto> loadBookGenres(Book book) {
         List<Genre> genres = genreRepository.getByBookId(book.getId());
         List<GenreDto> genreDtoList = new ArrayList<>();
@@ -97,77 +146,6 @@ public class BookServiceImpl implements BookService {
         return authors;
     }
 
-    @Override
-    public void addBookAuthors(Long bookId, List<Long> authorIds) {
-
-
-    }
-
-    @Override
-    public void addBookGenres(Long bookId, List<Long> genreIds) {
-
-    }
-
-    @Override
-    public void updateBook(Long bookId, String title, List<Long> authorIds, List<Long> genreIds) {
-        List<Author> authors = new ArrayList<>();
-        for (Long authorId : authorIds) {
-            authors.add(new Author(authorId));
-        }
-
-        List<Genre> genres = new ArrayList<>();
-        for (Long genreId : genreIds) {
-            genres.add(new Genre(genreId));
-        }
-
-        BookInfo bookInfo = BookInfo.builder()
-                .book(new Book(bookId, title))
-                .genres(genres)
-                .authors(authors)
-                .build();
-
-        bookRepository.updateBook(bookInfo);
-    }
-
-    @Override
-    public void deleteBook(Long id) {
-        bookRepository.deleteBook(id);
-    }
-
-    @Override
-    public BookDto getById(Long id) {
-        Book book = bookRepository.getById(id);
-        return BookDto.builder()
-                .bookId(book.getId())
-                .bookTitle(book.getTitle())
-                .authors(loadBookAuthors(book))
-                .genres(loadBookGenres(book))
-                .build();
-    }
-
-    @Override
-    public List<BookDto> getByAuthorId(Long authorId) {
-        List<Book> books = bookRepository.getByAuthorId(authorId);
-        return loadBookInfos(books);
-    }
-
-    private BookDto loadBookInfo(Book book) {
-        List<AuthorDto> authorDtoList = loadBookAuthors(book);
-        List<GenreDto> genreDtoList = loadBookGenres(book);
-        return BookDto.builder()
-                .bookId(book.getId())
-                .bookTitle(book.getTitle())
-                .authors(authorDtoList)
-                .genres(genreDtoList)
-                .build();
-    }
-
-    @Override
-    public List<BookDto> getAll() {
-        List<Book> books = bookRepository.getAll();
-        return loadBookInfos(books);
-    }
-
     private List<BookDto> loadBookInfos(List<Book> books) {
 
         List<BookDto> bookDtoList = new ArrayList<>();
@@ -181,5 +159,16 @@ public class BookServiceImpl implements BookService {
         }
 
         return bookDtoList;
+    }
+
+    private BookDto loadBookInfo(Book book) {
+        List<AuthorDto> authorDtoList = loadBookAuthors(book);
+        List<GenreDto> genreDtoList = loadBookGenres(book);
+        return BookDto.builder()
+                .bookId(book.getId())
+                .bookTitle(book.getTitle())
+                .authors(authorDtoList)
+                .genres(genreDtoList)
+                .build();
     }
 }

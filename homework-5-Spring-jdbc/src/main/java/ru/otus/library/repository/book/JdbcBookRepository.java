@@ -83,7 +83,7 @@ public class JdbcBookRepository implements BookRepository {
     public Book getById(Long id) {
         String sql = "select b.id, b.title from books b where b.id=:book_id";
         MapSqlParameterSource sqlParameters = new MapSqlParameterSource()
-                .addValue(":book_id", id);
+                .addValue("book_id", id);
         return jdbcOperations.queryForObject(sql, sqlParameters, new BookMapper());
     }
 
@@ -131,7 +131,7 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     private void deleteBookGenres(Long bookId) {
-        String sql = "delete from book_genres bg where bd.book_id = :book_id";
+        String sql = "delete from book_genres bg where bg.book_id = :book_id";
         MapSqlParameterSource sqlParameters = new MapSqlParameterSource()
                 .addValue("book_id", bookId);
         jdbcOperations.update(sql, sqlParameters);
