@@ -38,7 +38,8 @@ public class JdbcGenreRepository implements GenreRepository {
     public void updateGenre(Genre genre) {
         String sql = "update genres g set g.name = :name where g.id = :id";
         MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource()
-                .addValue("id", genre.getId());
+                .addValue("id", genre.getId())
+                .addValue("name", genre.getName());
         jdbcOperations.update(sql, sqlParameterSource);
     }
 
