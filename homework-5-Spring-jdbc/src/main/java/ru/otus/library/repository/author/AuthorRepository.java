@@ -15,8 +15,6 @@ public interface AuthorRepository {
 
     Author getById(Long id);
 
-    Author getByName(String name);
-
     List<Author> getByBookId(Long bookId);
 
     List<Author> getAll();
