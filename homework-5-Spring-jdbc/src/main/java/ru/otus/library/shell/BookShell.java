@@ -35,12 +35,6 @@ public class BookShell {
         return "";
     }
 
-    @ShellMethod(value = "get author's books", key = {"getAuthorBooks"})
-    public String getAuthorBooks(@ShellOption(value = {"id"}) Long authorId) {
-
-        return "";
-    }
-
     @ShellMethod(value = "get all books", key = {"getBooks"})
     public String getAllBooks() {
         return "";
