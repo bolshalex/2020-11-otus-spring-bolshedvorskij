@@ -3,11 +3,9 @@ package ru.otus.library.repository.book;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.otus.library.domain.entity.Author;
 import ru.otus.library.domain.entity.Book;
 import ru.otus.library.domain.entity.Genre;
@@ -20,7 +18,6 @@ import java.util.List;
 
 @DisplayName("Тест для работы с книгами")
 @JdbcTest
-@ExtendWith(SpringExtension.class)
 @Import({JdbcBookRepository.class, JdbcAuthorRepository.class, JdbcGenreRepository.class})
 class JdbcBookRepositoryTest {
 
