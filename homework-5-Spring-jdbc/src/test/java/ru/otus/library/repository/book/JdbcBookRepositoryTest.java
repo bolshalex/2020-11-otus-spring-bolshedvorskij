@@ -10,11 +10,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.otus.library.domain.entity.Author;
 import ru.otus.library.domain.entity.Book;
-import ru.otus.library.domain.entity.BookInfo;
 import ru.otus.library.domain.entity.Genre;
-import ru.otus.library.repository.author.AuthorRepository;
 import ru.otus.library.repository.author.JdbcAuthorRepository;
-import ru.otus.library.repository.genre.GenreRepository;
 import ru.otus.library.repository.genre.JdbcGenreRepository;
 
 import java.util.ArrayList;
@@ -29,45 +26,33 @@ class JdbcBookRepositoryTest {
 
     @Autowired
     private BookRepository bookRepository;
-    @Autowired
-    private AuthorRepository authorRepository;
-
-    @Autowired
-    private GenreRepository genreRepository;
 
     @DisplayName("должен создавать книгу")
     @Test
     void createBook() {
         Book book = Book.builder().title("On Lisp: Advanced Techniques for Common Lisp").build();
-        BookInfo bookInfo = BookInfo.builder().book(book).build();
-        Book createdBook = bookRepository.createBook(bookInfo);
+        Book createdBook = bookRepository.createBook(book);
         Assertions.assertThat(book.getTitle()).isEqualTo(createdBook.getTitle());
     }
 
     @DisplayName("должен обновлять книгу")
     @Test
     void shouldUpdateBook() {
-        Book book = new Book(4L, "Design Patterns: Elements of Reusable Object-Oriented Software 1st Edition");
 
         List<Author> authors = Collections.singletonList(new Author(3L, "Erich Gamma"));
         List<Genre> genres = Collections.singletonList(new Genre(2L, "Computer Science"));
-        BookInfo bookInfo = BookInfo.builder()
-                .book(book)
+        Book book = Book.builder()
+                .id(4L)
+                .title("Design Patterns: Elements of Reusable Object-Oriented Software 1st Edition")
                 .authors(authors)
                 .genres(genres)
                 .build();
 
-        bookRepository.updateBook(bookInfo);
+        bookRepository.updateBook(book);
 
         Book updatedBook = bookRepository.getById(book.getId());
+
         Assertions.assertThat(book).isEqualTo(updatedBook);
-
-        List<Author> bookAuthors = authorRepository.getByBookId(book.getId());
-        Assertions.assertThat(authors).isEqualTo(bookAuthors);
-
-        List<Genre> bookGenres = genreRepository.getByBookId(book.getId());
-        Assertions.assertThat(genres).isEqualTo(bookGenres);
-
     }
 
     @DisplayName("должен удалять книгу")
@@ -81,21 +66,48 @@ class JdbcBookRepositoryTest {
 
     @DisplayName("должен получать книгу по id")
     @Test
-    void shouldGetById() {
+    void shouldGetBookById() {
         Book book = bookRepository.getById(1L);
-        Book expectedBook = new Book(1L, "Python Crash Course, 2nd Edition: A Hands-On, Project-Based Introduction to Programming");
+
+        List<Author> authors = Collections.singletonList(new Author(1L, "Eric Matthes"));
+        List<Genre> genres = Collections.singletonList(new Genre(1L, "Programming"));
+
+        Book expectedBook = Book.builder()
+                .id(1L)
+                .title("Python Crash Course, 2nd Edition: A Hands-On, Project-Based Introduction to Programming")
+                .authors(authors)
+                .genres(genres)
+                .build();
+
         Assertions.assertThat(book).isEqualTo(expectedBook);
     }
 
     @DisplayName("должен поучать книги автора")
     @Test
-    void shouldGetByAuthorId() {
-        List<Book> book = bookRepository.getByAuthorId(1L);
+    void shouldGetBooksByAuthorId() {
+        List<Book> actualBook = bookRepository.getByAuthorId(1L);
 
         List<Book> expectedBooks = new ArrayList<>();
-        expectedBooks.add(new Book(1L, "Python Crash Course, 2nd Edition: A Hands-On, Project-Based Introduction to Programming"));
-        expectedBooks.add(new Book(2L, "Python Flash Cards: Syntax, Concepts, and Examples Cards"));
 
-        Assertions.assertThat(book).isEqualTo(expectedBooks);
+        List<Author> authors = Collections.singletonList(new Author(1L, "Eric Matthes"));
+        List<Genre> genres = Collections.singletonList(new Genre(1L, "Programming"));
+
+        Book firstBook = Book.builder()
+                .id(1L)
+                .title("Python Crash Course, 2nd Edition: A Hands-On, Project-Based Introduction to Programming")
+                .authors(authors)
+                .genres(genres)
+                .build();
+        expectedBooks.add(firstBook);
+
+        Book secondBook = Book.builder()
+                .id(2L)
+                .title("Python Flash Cards: Syntax, Concepts, and Examples Cards")
+                .authors(authors)
+                .genres(genres)
+                .build();
+        expectedBooks.add(secondBook);
+
+        Assertions.assertThat(actualBook).isEqualTo(expectedBooks);
     }
 }

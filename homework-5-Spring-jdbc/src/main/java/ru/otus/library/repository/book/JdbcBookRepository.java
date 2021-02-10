@@ -11,29 +11,39 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.library.domain.entity.Author;
 import ru.otus.library.domain.entity.Book;
-import ru.otus.library.domain.entity.BookInfo;
 import ru.otus.library.domain.entity.Genre;
+import ru.otus.library.repository.author.AuthorRepository;
+import ru.otus.library.repository.genre.GenreRepository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 public class JdbcBookRepository implements BookRepository {
     private final NamedParameterJdbcOperations jdbcOperations;
+    private final AuthorRepository authorRepository;
+    private final GenreRepository genreRepository;
 
     @Autowired
-    public JdbcBookRepository(NamedParameterJdbcOperations jdbcOperations) {
+    public JdbcBookRepository(NamedParameterJdbcOperations jdbcOperations,
+                              AuthorRepository authorRepository,
+                              GenreRepository genreRepository) {
         this.jdbcOperations = jdbcOperations;
+        this.authorRepository = authorRepository;
+        this.genreRepository = genreRepository;
     }
 
     @Transactional
     @Override
-    public Book createBook(BookInfo bookInfo) {
-        Book book = bookInfo.getBook();
+    public Book createBook(Book book) {
         insertBook(book);
-        insertBookAuthors(book.getId(), bookInfo.getAuthors());
-        insertBookGenres(book.getId(), bookInfo.getGenres());
+        insertBookAuthors(book.getId(), book.getAuthors());
+        insertBookGenres(book.getId(), book.getGenres());
+        book.setAuthors(authorRepository.getByBookId(book.getId()));
+        book.setGenres(genreRepository.getByBookId(book.getId()));
         return book;
     }
 
@@ -51,21 +61,12 @@ public class JdbcBookRepository implements BookRepository {
 
     }
 
-    private void insertBookGenre(Long bookId, Genre genre) {
-        String sql = "insert into book_genres(`book_id`,`genre_id`) values(:book_id, :genre_id)";
-        MapSqlParameterSource sqlParameters = new MapSqlParameterSource()
-                .addValue("book_id", bookId)
-                .addValue("genre_id", genre.getId());
-        jdbcOperations.update(sql, sqlParameters);
-    }
-
     @Transactional
     @Override
-    public void updateBook(BookInfo bookInfo) {
-        Book book = bookInfo.getBook();
-        updateBook(book);
-        updateBookAuthors(book.getId(), bookInfo.getAuthors());
-        updateBookGenres(book.getId(), bookInfo.getGenres());
+    public void updateBook(Book book) {
+        updateBookTitle(book);
+        updateBookAuthors(book.getId(), book.getAuthors());
+        updateBookGenres(book.getId(), book.getGenres());
     }
 
     @Transactional
@@ -73,6 +74,7 @@ public class JdbcBookRepository implements BookRepository {
     public void deleteBook(Long id) {
         deleteBookAuthors(id);
         deleteBookGenres(id);
+
         String sql = "delete from books b where b.id = :book_id";
         MapSqlParameterSource sqlParameters = new MapSqlParameterSource()
                 .addValue("book_id", id);
@@ -81,25 +83,64 @@ public class JdbcBookRepository implements BookRepository {
 
     @Override
     public Book getById(Long id) {
-        String sql = "select b.id, b.title from books b where b.id=:book_id";
+        String sql = "select b.id, b.title from books b where b.id = :book_id";
         MapSqlParameterSource sqlParameters = new MapSqlParameterSource()
                 .addValue("book_id", id);
-        return jdbcOperations.queryForObject(sql, sqlParameters, new BookMapper());
+        Book book = jdbcOperations.queryForObject(sql, sqlParameters, new BookMapper());
+        if (book == null) {
+            return book;
+        }
+        book.setAuthors(authorRepository.getByBookId(book.getId()));
+        book.setGenres(genreRepository.getByBookId(book.getId()));
+
+        return book;
     }
 
     @Override
     public List<Book> getByAuthorId(Long authorId) {
         String sql = "select b.id, b.title from books b join author_books ab on b.id = ab.book_id " +
-                "where ab.author_id=:author_id ";
+                "where ab.author_id = :author_id ";
         MapSqlParameterSource sqlParameters = new MapSqlParameterSource()
                 .addValue("author_id", authorId);
-        return jdbcOperations.query(sql, sqlParameters, new BookMapper());
+
+        List<Book> books = jdbcOperations.query(sql, sqlParameters, new BookMapper());
+
+        return addAdditionalBookInfo(books);
     }
 
     @Override
     public List<Book> getAll() {
+        List<Book> books = loadAllBooks();
+        return addAdditionalBookInfo(books);
+    }
+
+    private List<Book> addAdditionalBookInfo(List<Book> books) {
+        List<Long> bookIds = books.stream()
+                .map(Book::getId)
+                .collect(Collectors.toList());
+
+        Map<Long, List<Genre>> bookGenres = genreRepository.getBookGenres(bookIds);
+        Map<Long, List<Author>> bookAuthors = authorRepository.getAuthorsByBookIds(bookIds);
+
+        for (Book book : books) {
+            book.setGenres(bookGenres.get(book.getId()));
+            book.setAuthors(bookAuthors.get(book.getId()));
+        }
+
+        return books;
+    }
+
+    private List<Book> loadAllBooks() {
         String sql = "select b.id, b.title from books b";
         return jdbcOperations.query(sql, new BookMapper());
+    }
+
+    private void insertBookGenre(Long bookId, Genre genre) {
+        String sql = "insert into book_genres(`book_id`,`genre_id`) values(:book_id, :genre_id)";
+        MapSqlParameterSource sqlParameters = new MapSqlParameterSource()
+                .addValue("book_id", bookId)
+                .addValue("genre_id", genre.getId());
+        jdbcOperations.update(sql, sqlParameters);
     }
 
     private void insertBook(Book book) {
@@ -137,7 +178,7 @@ public class JdbcBookRepository implements BookRepository {
         jdbcOperations.update(sql, sqlParameters);
     }
 
-    private void updateBook(Book book) {
+    private void updateBookTitle(Book book) {
         String sql = "update books b set b.title = :title where b.id = :book_id";
         MapSqlParameterSource sqlParameters = new MapSqlParameterSource()
                 .addValue("title", book.getTitle())

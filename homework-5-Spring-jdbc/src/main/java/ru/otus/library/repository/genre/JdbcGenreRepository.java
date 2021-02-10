@@ -1,6 +1,8 @@
 package ru.otus.library.repository.genre;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -12,7 +14,10 @@ import ru.otus.library.domain.entity.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class JdbcGenreRepository implements GenreRepository {
@@ -72,6 +77,16 @@ public class JdbcGenreRepository implements GenreRepository {
     }
 
     @Override
+    public Map<Long, List<Genre>> getBookGenres(List<Long> bookIds) {
+        String sql = "select bg.book_id, g.id, g.name " +
+                "from book_genres bg join genres g on  bg.genre_id = g.id " +
+                "where bg.book_id in (:book_ids)";
+        MapSqlParameterSource sqlParameters = new MapSqlParameterSource()
+                .addValue("book_ids", bookIds);
+        return jdbcOperations.query(sql, sqlParameters, new BookGenreRsExtractor());
+    }
+
+    @Override
     public List<Genre> getAll() {
         String sql = "select g.id, g.name from genres g";
         return jdbcOperations.query(sql, new GenreMapper());
@@ -88,6 +103,30 @@ public class JdbcGenreRepository implements GenreRepository {
         @Override
         public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new Genre(rs.getLong("id"), rs.getString("name"));
+        }
+    }
+
+    private static class BookGenreRsExtractor implements ResultSetExtractor<Map<Long, List<Genre>>> {
+        RowMapper<Genre> genreRowMapper = new GenreMapper();
+
+        @Override
+        public Map<Long, List<Genre>> extractData(ResultSet rs) throws SQLException, DataAccessException {
+            Map<Long, List<Genre>> bookGenres = new HashMap<>();
+
+            while (rs.next()) {
+                Long bookId = rs.getLong("book_id");
+                Genre genre = genreRowMapper.mapRow(rs, rs.getRow());
+
+                List<Genre> genres = bookGenres.get(bookId);
+                if (genres == null) {
+                    genres = new ArrayList<>();
+                    genres.add(genre);
+                    bookGenres.put(bookId, genres);
+                } else {
+                    genres.add(genre);
+                }
+            }
+            return bookGenres;
         }
     }
 }

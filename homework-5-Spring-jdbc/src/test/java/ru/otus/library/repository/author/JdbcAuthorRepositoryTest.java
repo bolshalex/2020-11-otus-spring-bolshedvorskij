@@ -9,19 +9,18 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.otus.library.domain.entity.Author;
-import ru.otus.library.domain.entity.AuthorInfo;
 import ru.otus.library.domain.entity.Book;
+import ru.otus.library.domain.entity.Genre;
 import ru.otus.library.repository.book.BookRepository;
 import ru.otus.library.repository.book.JdbcBookRepository;
+import ru.otus.library.repository.genre.JdbcGenreRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @DisplayName("Тест для работы с авторами")
 @JdbcTest
 @ExtendWith(SpringExtension.class)
-@Import({JdbcAuthorRepository.class, JdbcBookRepository.class})
+@Import({JdbcAuthorRepository.class, JdbcBookRepository.class, JdbcGenreRepository.class})
 class JdbcAuthorRepositoryTest {
     @Autowired
     private AuthorRepository authorRepository;
@@ -31,13 +30,15 @@ class JdbcAuthorRepositoryTest {
     @DisplayName("должен вставить автора и вернуть его обратно")
     @Test
     void shouldCreateAndReturnAuthor() {
-        Author exceptedAuthor = new Author();
-        exceptedAuthor.setName("Глуховский, Дмитрий Алексеевич");
+        Author exceptedAuthor = Author.builder()
+                .name("Глуховский, Дмитрий Алексеевич")
+                .build();
 
-        Author author = new Author();
-        author.setName("Глуховский, Дмитрий Алексеевич");
-        AuthorInfo authorInfo = new AuthorInfo(author, new ArrayList<>());
-        Author actualAuthor = authorRepository.createAuthor(authorInfo);
+        Author author = Author.builder()
+                .name("Глуховский, Дмитрий Алексеевич")
+                .build();
+
+        Author actualAuthor = authorRepository.createAuthor(author);
 
         Assertions.assertThat(actualAuthor.getName()).isEqualTo(exceptedAuthor.getName());
     }
@@ -46,22 +47,30 @@ class JdbcAuthorRepositoryTest {
     @Test
     void shouldUpdateAuthor() {
         Author expectedAuthor = new Author(1L, "Eric");
-        List<Book> books = Collections.singletonList(Book.builder().id(1L).build());
-
-        AuthorInfo authorInfo = new AuthorInfo(new Author(1L, "Eric"), books);
-        authorRepository.updateAuthor(authorInfo);
+        authorRepository.updateAuthor(expectedAuthor);
         Author actualAuthor = authorRepository.getById(1L);
         Assertions.assertThat(actualAuthor).isEqualTo(expectedAuthor);
+    }
 
-        List<Book> actualBook = bookRepository.getByAuthorId(actualAuthor.getId());
+    @DisplayName("должен обновлять список книг автора")
+    @Test
+    void shouldUpdateAuthorBooks() {
+        List<Book> books = Collections.singletonList(Book.builder().id(1L).build());
+        Author author = new Author(1L, "Eric Matthes");
+
+        authorRepository.updateAuthorBooks(author, books);
+        List<Book> actualBook = bookRepository.getByAuthorId(author.getId());
 
         Book expectedBook = Book.builder()
                 .id(1L)
                 .title("Python Crash Course, 2nd Edition: A Hands-On, Project-Based Introduction to Programming")
+                .authors(Collections.singletonList(author))
+                .genres(Collections.singletonList(new Genre(1L, "Programming")))
                 .build();
 
         List<Book> expectedBooks = Collections.singletonList(expectedBook);
-        Assertions.assertThat(actualBook).isEqualTo(expectedBooks);
+
+        Assertions.assertThat(expectedBooks).isEqualTo(actualBook);
     }
 
     @DisplayName("должен удалять автора")
@@ -72,5 +81,44 @@ class JdbcAuthorRepositoryTest {
         authorRepository.deleteAuthor(1L);
         List<Author> afterDeleteAuthors = authorRepository.getAll();
         Assertions.assertThat(afterDeleteAuthors.size()).isEqualTo(beforeCount - 1);
+    }
+
+    @DisplayName("должен получать список авторов по id книги ")
+    @Test
+    void shouldGetAuthorsByBookId() {
+        List<Author> expectedAuthors = new ArrayList<>();
+        expectedAuthors.add(new Author(3L, "Erich Gamma"));
+        expectedAuthors.add(new Author(4L, "Richard Helm"));
+        expectedAuthors.add(new Author(5L, "Ralph Johnson"));
+        expectedAuthors.add(new Author(6L, "John Vlissides"));
+        expectedAuthors.add(new Author(7L, "Grady Booch"));
+
+        List<Author> actualAuthors = authorRepository.getByBookId(4L);
+        Assertions.assertThat(expectedAuthors)
+                .containsExactlyInAnyOrderElementsOf(actualAuthors);
+    }
+
+    @DisplayName("должен получать список авторов по списку id книг")
+    @Test
+    void shouldGetAuthorsByBookIds() {
+
+        List<Author> firstBookAuthors = new ArrayList<>();
+        firstBookAuthors.add(new Author(1L, "Eric Matthes"));
+
+        List<Author> secondBookAuthors = new ArrayList<>();
+        secondBookAuthors.add(new Author(3L, "Erich Gamma"));
+        secondBookAuthors.add(new Author(4L, "Richard Helm"));
+        secondBookAuthors.add(new Author(5L, "Ralph Johnson"));
+        secondBookAuthors.add(new Author(6L, "John Vlissides"));
+        secondBookAuthors.add(new Author(7L, "Grady Booch"));
+
+        Map<Long, List<Author>> expectedBookAuthors = new HashMap<>();
+        expectedBookAuthors.put(1L, firstBookAuthors);
+        expectedBookAuthors.put(4L, secondBookAuthors);
+
+        List<Long> bookIds = Arrays.asList(1L, 4L);
+        Map<Long, List<Author>> actualBookAuthors = authorRepository.getAuthorsByBookIds(bookIds);
+        Assertions.assertThat(expectedBookAuthors)
+                .containsExactlyInAnyOrderEntriesOf(actualBookAuthors);
     }
 }

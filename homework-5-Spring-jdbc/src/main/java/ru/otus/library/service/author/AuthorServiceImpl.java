@@ -2,9 +2,9 @@ package ru.otus.library.service.author;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.library.domain.dto.AuthorDto;
 import ru.otus.library.domain.entity.Author;
-import ru.otus.library.domain.entity.AuthorInfo;
 import ru.otus.library.domain.entity.Book;
 import ru.otus.library.repository.author.AuthorRepository;
 
@@ -20,14 +20,17 @@ public class AuthorServiceImpl implements AuthorService {
         this.authorRepository = authorRepository;
     }
 
+    @Transactional
     @Override
     public AuthorDto createAuthor(String name, List<Long> bookIds) {
         Author author = Author.builder()
                 .name(name)
                 .build();
 
-        AuthorInfo authorInfo = createAuthorInfo(author, bookIds);
-        Author createdAuthor = authorRepository.createAuthor(authorInfo);
+        List<Book> books = buildBooks(bookIds);
+
+        Author createdAuthor = authorRepository.createAuthor(author);
+        authorRepository.addAuthorBooks(author, books);
 
         return AuthorDto.builder()
                 .id(createdAuthor.getId())
@@ -35,14 +38,17 @@ public class AuthorServiceImpl implements AuthorService {
                 .build();
     }
 
+    @Transactional
     @Override
     public void updateAuthor(Long authorId, String name, List<Long> bookIds) {
         Author author = Author.builder()
                 .id(authorId)
                 .name(name)
                 .build();
-        AuthorInfo authorInfo = createAuthorInfo(author, bookIds);
-        authorRepository.updateAuthor(authorInfo);
+
+        authorRepository.updateAuthor(author);
+        List<Book> books = buildBooks(bookIds);
+        authorRepository.updateAuthorBooks(author, books);
     }
 
     @Override
@@ -72,6 +78,7 @@ public class AuthorServiceImpl implements AuthorService {
     public List<AuthorDto> getAllAuthors() {
         List<Author> authors = authorRepository.getAll();
         List<AuthorDto> authorDtoList = new ArrayList<>();
+
         for (Author author : authors) {
             AuthorDto authorDto = AuthorDto.builder()
                     .id(author.getId())
@@ -79,15 +86,17 @@ public class AuthorServiceImpl implements AuthorService {
                     .build();
             authorDtoList.add(authorDto);
         }
+
         return authorDtoList;
     }
 
-    private AuthorInfo createAuthorInfo(Author author, List<Long> bookIds) {
+    private List<Book> buildBooks(List<Long> bookIds) {
         List<Book> books = new ArrayList<>();
         for (Long bookId : bookIds) {
             Book book = Book.builder().id(bookId).build();
             books.add(book);
         }
-        return new AuthorInfo(author, books);
+        return books;
     }
+
 }
