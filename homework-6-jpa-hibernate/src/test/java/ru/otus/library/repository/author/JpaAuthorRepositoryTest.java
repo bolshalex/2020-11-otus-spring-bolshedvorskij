@@ -5,11 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.otus.library.domain.entity.Author;
 import ru.otus.library.domain.entity.Book;
-import ru.otus.library.domain.entity.BookComment;
 import ru.otus.library.domain.entity.Genre;
 import ru.otus.library.repository.book.BookRepository;
 import ru.otus.library.repository.book.JpaBookRepository;
@@ -27,8 +25,6 @@ class JpaAuthorRepositoryTest {
     private AuthorRepository authorRepository;
     @Autowired
     private BookRepository bookRepository;
-    @Autowired
-    private TestEntityManager em;
 
     @DisplayName("должен вставить автора и вернуть его обратно")
     @Test
@@ -65,18 +61,11 @@ class JpaAuthorRepositoryTest {
 
         List<Book> actualBook = bookRepository.getByAuthorId(author.getId());
 
-        BookComment comment = BookComment.builder()
-                .id(4L)
-                .text("same comment")
-                .build();
-        List<BookComment> bookComments = Collections.singletonList(comment);
-
         Book expectedBook = Book.builder()
                 .id(1L)
                 .title("Python Crash Course, 2nd Edition: A Hands-On, Project-Based Introduction to Programming")
                 .authors(Collections.singletonList(author))
                 .genres(Collections.singletonList(new Genre(1L, "Programming")))
-                .comments(bookComments)
                 .build();
 
         List<Book> expectedBooks = Collections.singletonList(expectedBook);

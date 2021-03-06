@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.otus.library.domain.entity.Author;
 import ru.otus.library.domain.entity.Book;
-import ru.otus.library.domain.entity.BookComment;
 import ru.otus.library.domain.entity.Genre;
 
 import java.util.ArrayList;
@@ -41,18 +40,11 @@ class JpaBookRepositoryTest {
         List<Author> authors = Collections.singletonList(new Author(3L, "Erich Gamma"));
         List<Genre> genres = Collections.singletonList(new Genre(2L, "Computer Science"));
 
-        BookComment comment = BookComment.builder()
-                .id(3L)
-                .text("recommend")
-                .build();
-        List<BookComment> bookComments = Collections.singletonList(comment);
-
         Book book = Book.builder()
                 .id(4L)
                 .title("Design Patterns: Elements of Reusable Object-Oriented Software 1st Edition")
                 .authors(authors)
                 .genres(genres)
-                .comments(bookComments)
                 .build();
 
         bookRepository.updateBook(book);
@@ -79,19 +71,11 @@ class JpaBookRepositoryTest {
         List<Author> authors = Collections.singletonList(new Author(1L, "Eric Matthes"));
         List<Genre> genres = Collections.singletonList(new Genre(1L, "Programming"));
 
-
-        BookComment comment = BookComment.builder()
-                .id(4L)
-                .text("same comment")
-                .build();
-        List<BookComment> bookComments = Collections.singletonList(comment);
-
         Book expectedBook = Book.builder()
                 .id(1L)
                 .title("Python Crash Course, 2nd Edition: A Hands-On, Project-Based Introduction to Programming")
                 .authors(authors)
                 .genres(genres)
-                .comments(bookComments)
                 .build();
 
 
@@ -108,18 +92,11 @@ class JpaBookRepositoryTest {
         List<Author> authors = Collections.singletonList(new Author(1L, "Eric Matthes"));
         List<Genre> genres = Collections.singletonList(new Genre(1L, "Programming"));
 
-        BookComment comment = BookComment.builder()
-                .id(4L)
-                .text("same comment")
-                .build();
-        List<BookComment> bookComments = Collections.singletonList(comment);
-
         Book firstBook = Book.builder()
                 .id(1L)
                 .title("Python Crash Course, 2nd Edition: A Hands-On, Project-Based Introduction to Programming")
                 .authors(authors)
                 .genres(genres)
-                .comments(bookComments)
                 .build();
         expectedBooks.add(firstBook);
 
@@ -128,7 +105,6 @@ class JpaBookRepositoryTest {
                 .title("Python Flash Cards: Syntax, Concepts, and Examples Cards")
                 .authors(authors)
                 .genres(genres)
-                .comments(new ArrayList<>())
                 .build();
 
         expectedBooks.add(secondBook);

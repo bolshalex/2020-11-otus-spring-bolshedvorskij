@@ -32,7 +32,6 @@ public class AuthorServiceImpl implements AuthorService {
         author.setBooks(books);
 
         Author createdAuthor = authorRepository.createAuthor(author);
-        //authorRepository.addAuthorBooks(author, books);
 
         return AuthorDto.builder()
                 .id(createdAuthor.getId())
@@ -53,15 +52,15 @@ public class AuthorServiceImpl implements AuthorService {
 
         authorRepository.updateAuthor(author);
 
-        //authorRepository.updateAuthorBooks(author, books);
     }
 
+    @Transactional
     @Override
     public void deleteAuthor(Long authorId) {
         authorRepository.deleteAuthor(authorId);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public AuthorDto getAuthor(Long authorId) {
         Author author = authorRepository.getById(authorId);
@@ -71,7 +70,7 @@ public class AuthorServiceImpl implements AuthorService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public AuthorDto getAuthorByName(String name) {
         Author author = authorRepository.getByName(name);
@@ -81,7 +80,7 @@ public class AuthorServiceImpl implements AuthorService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<AuthorDto> getAllAuthors() {
         List<Author> authors = authorRepository.getAll();

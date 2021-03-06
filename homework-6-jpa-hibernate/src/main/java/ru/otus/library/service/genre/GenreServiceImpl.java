@@ -3,6 +3,7 @@ package ru.otus.library.service.genre;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.library.domain.dto.GenreDto;
 import ru.otus.library.domain.entity.Genre;
 import ru.otus.library.repository.genre.GenreRepository;
@@ -19,6 +20,7 @@ public class GenreServiceImpl implements GenreService {
         this.genreRepository = genreRepository;
     }
 
+    @Transactional
     @Override
     public GenreDto createGenre(String name) {
         Genre genre = Genre.builder().name(name).build();
@@ -29,17 +31,20 @@ public class GenreServiceImpl implements GenreService {
                 .build();
     }
 
+    @Transactional
     @Override
     public void updateGenre(Long genreId, String name) {
         Genre genre = new Genre(genreId, name);
         genreRepository.updateGenre(genre);
     }
 
+    @Transactional
     @Override
     public void deleteGenre(Long genreId) {
         genreRepository.deleteGenre(genreId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public GenreDto getGenre(Long genreId) {
 
@@ -51,6 +56,7 @@ public class GenreServiceImpl implements GenreService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<GenreDto> getAllGenres() {
         List<Genre> genres = genreRepository.getAll();

@@ -3,12 +3,12 @@ package ru.otus.library.service.comment;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.library.domain.dto.BookCommentDto;
 import ru.otus.library.domain.entity.Book;
 import ru.otus.library.domain.entity.BookComment;
 import ru.otus.library.repository.comment.CommentRepository;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public BookCommentDto getCommentById(Long id) {
         BookComment comment = commentRepository.getCommentById(id);
@@ -54,6 +54,7 @@ public class CommentServiceImpl implements CommentService {
         return buildCommentDto(comment);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookCommentDto> getBookComments(Long bookId) {
         List<BookComment> comments = commentRepository.getBookComments(bookId);

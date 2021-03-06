@@ -3,6 +3,7 @@ package ru.otus.library.service.book;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.library.domain.dto.AuthorDto;
 import ru.otus.library.domain.dto.BookDto;
 import ru.otus.library.domain.dto.GenreDto;
@@ -11,7 +12,6 @@ import ru.otus.library.domain.entity.Book;
 import ru.otus.library.domain.entity.Genre;
 import ru.otus.library.repository.book.BookRepository;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,21 +59,21 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteBook(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public BookDto getById(Long id) {
         Book book = bookRepository.getById(id);
         return buildBookDto(book);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<BookDto> getByAuthorId(Long authorId) {
         List<Book> books = bookRepository.getByAuthorId(authorId);
         return buildBookDtoList(books);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<BookDto> getAll() {
         List<Book> books = bookRepository.getAll();

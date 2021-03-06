@@ -16,10 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@NamedEntityGraph(name = "genres-entity-graph",
-        attributeNodes = {@NamedAttributeNode("genres")})
-@NamedEntityGraph(name = "authors-entity-graph",
-        attributeNodes = {@NamedAttributeNode("authors")})
 @Table(name = "books")
 public class Book {
     @Id
@@ -44,12 +40,4 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
-
-    @Fetch(FetchMode.SELECT)
-    @BatchSize(size = 20)
-    @OneToMany(targetEntity = BookComment.class,
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", insertable = false, updatable = false)
-    private List<BookComment> comments;
 }

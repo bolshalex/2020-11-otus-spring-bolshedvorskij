@@ -27,10 +27,6 @@ public class Author {
             inverseJoinColumns = @JoinColumn(name = "book_id"))
     private List<Book> books;
 
-    public Author(Long id) {
-        this.id = id;
-    }
-
     public Author(Long id, String name) {
         this.id = id;
         this.name = name;
