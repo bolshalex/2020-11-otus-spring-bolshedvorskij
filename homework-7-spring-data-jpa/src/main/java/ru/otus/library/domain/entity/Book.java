@@ -26,16 +26,13 @@ public class Book {
 
     @Fetch(FetchMode.SELECT)
     @BatchSize(size = 20)
-    @ManyToMany(targetEntity = Author.class, fetch = FetchType.EAGER)
-    @JoinTable(name = "author_books",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "author_id"))
+    @ManyToMany(targetEntity = Author.class, fetch = FetchType.EAGER, mappedBy = "books")
     private List<Author> authors;
 
 
     @Fetch(FetchMode.SELECT)
     @BatchSize(size = 20)
-    @ManyToMany(targetEntity = Genre.class,fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = Genre.class, fetch = FetchType.LAZY)
     @JoinTable(name = "book_genres",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
