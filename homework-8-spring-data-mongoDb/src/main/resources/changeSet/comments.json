@@ -1,0 +1,23 @@
+[
+  {
+    "_id": "2",
+    "text": "left comment",
+    "book": {
+      "_id": "4"
+    }
+  },
+  {
+    "_id": "3",
+    "text": "recommend",
+    "book": {
+      "_id": "4"
+    }
+  },
+  {
+    "_id": "4",
+    "text": "same comment",
+    "book": {
+      "_id": "1"
+    }
+  }
+]

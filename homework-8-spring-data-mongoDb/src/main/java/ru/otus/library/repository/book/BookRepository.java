@@ -1,17 +1,12 @@
 package ru.otus.library.repository.book;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import ru.otus.library.domain.entity.Author;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import ru.otus.library.domain.entity.Book;
-import ru.otus.library.domain.entity.Genre;
 
 import java.util.List;
 
-public interface BookRepository extends JpaRepository<Book, Long> {
+public interface BookRepository extends MongoRepository<Book, String> {
 
-    Book getById(Long id);
+    List<Book> getByAuthorsId(String authorId);
 
-    List<Book> getByAuthorsId(Long authorId);
-
-    void deleteById(Long id);
 }

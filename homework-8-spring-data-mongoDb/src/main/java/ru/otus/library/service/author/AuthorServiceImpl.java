@@ -1,12 +1,14 @@
 package ru.otus.library.service.author;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.otus.library.domain.dto.AuthorDto;
 import ru.otus.library.domain.entity.Author;
 import ru.otus.library.domain.entity.Book;
 import ru.otus.library.repository.author.AuthorRepository;
+import ru.otus.library.repository.book.BookRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,24 +16,21 @@ import java.util.List;
 @Service
 public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
+    private final BookRepository bookRepository;
 
     @Autowired
-    public AuthorServiceImpl(AuthorRepository authorRepository) {
+    public AuthorServiceImpl(AuthorRepository authorRepository, BookRepository bookRepository) {
         this.authorRepository = authorRepository;
+        this.bookRepository = bookRepository;
     }
 
-    @Transactional
     @Override
-    public AuthorDto createAuthor(String name, List<Long> bookIds) {
+    public AuthorDto createAuthor(String name, List<String> bookIds) {
         Author author = Author.builder()
                 .name(name)
                 .build();
 
-        List<Book> books = buildBooks(bookIds);
-
-        author.setBooks(books);
-
-        Author createdAuthor = authorRepository.saveAndFlush(author);
+        Author createdAuthor = authorRepository.save(author);
 
         return AuthorDto.builder()
                 .id(createdAuthor.getId())
@@ -39,48 +38,41 @@ public class AuthorServiceImpl implements AuthorService {
                 .build();
     }
 
-    @Transactional
     @Override
-    public void updateAuthor(Long authorId, String name, List<Long> bookIds) {
+    public void updateAuthor(String authorId, String name, List<String> bookIds) {
 
-        List<Book> books = buildBooks(bookIds);
         Author author = Author.builder()
                 .id(authorId)
                 .name(name)
-                .books(books)
                 .build();
 
-        authorRepository.saveAndFlush(author);
+        authorRepository.save(author);
 
     }
 
-    @Transactional
     @Override
-    public void deleteAuthor(Long authorId) {
+    public void deleteAuthor(String authorId) {
         authorRepository.deleteById(authorId);
     }
 
-    @Transactional(readOnly = true)
     @Override
-    public AuthorDto getAuthor(Long authorId) {
-        Author author = authorRepository.getById(authorId);
+    public AuthorDto getAuthor(String authorId) {
+        Author author = authorRepository.findById(authorId).orElseThrow();
         return AuthorDto.builder()
                 .id(authorId)
                 .name(author.getName())
                 .build();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public AuthorDto getAuthorByName(String name) {
-        Author author = authorRepository.getFirstByName(name);
+        Author author = authorRepository.getByName(name);
         return AuthorDto.builder()
                 .id(author.getId())
                 .name(author.getName())
                 .build();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<AuthorDto> getAllAuthors() {
         List<Author> authors = authorRepository.findAll();
@@ -95,15 +87,6 @@ public class AuthorServiceImpl implements AuthorService {
         }
 
         return authorDtoList;
-    }
-
-    private List<Book> buildBooks(List<Long> bookIds) {
-        List<Book> books = new ArrayList<>();
-        for (Long bookId : bookIds) {
-            Book book = Book.builder().id(bookId).build();
-            books.add(book);
-        }
-        return books;
     }
 
 }

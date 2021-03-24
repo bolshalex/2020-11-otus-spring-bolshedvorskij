@@ -5,13 +5,13 @@ import ru.otus.library.domain.dto.AuthorDto;
 import java.util.List;
 
 public interface AuthorService {
-    AuthorDto createAuthor(String name, List<Long> bookIds);
+    AuthorDto createAuthor(String name, List<String> bookIds);
 
-    void updateAuthor(Long authorId, String name, List<Long> bookIds);
+    void updateAuthor(String authorId, String name, List<String> bookIds);
 
-    void deleteAuthor(Long authorId);
+    void deleteAuthor(String authorId);
 
-    AuthorDto getAuthor(Long authorId);
+    AuthorDto getAuthor(String authorId);
 
     AuthorDto getAuthorByName(String name);
 

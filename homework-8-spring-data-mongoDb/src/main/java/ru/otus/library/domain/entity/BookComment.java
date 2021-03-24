@@ -1,25 +1,24 @@
 package ru.otus.library.domain.entity;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.*;
-
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity
-@Table(name = "book_comments")
 public class BookComment {
+    @SerializedName("_id")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(name = "text")
+    @Field(name = "text")
     private String text;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Book.class)
-    @JoinColumn(name = "book_id", updatable = false)
+    @DBRef
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Book book;

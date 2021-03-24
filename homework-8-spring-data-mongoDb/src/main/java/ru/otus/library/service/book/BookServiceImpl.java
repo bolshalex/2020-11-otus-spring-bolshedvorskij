@@ -3,7 +3,6 @@ package ru.otus.library.service.book;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.otus.library.domain.dto.AuthorDto;
 import ru.otus.library.domain.dto.BookDto;
 import ru.otus.library.domain.dto.GenreDto;
@@ -11,90 +10,99 @@ import ru.otus.library.domain.entity.Author;
 import ru.otus.library.domain.entity.Book;
 import ru.otus.library.domain.entity.Genre;
 import ru.otus.library.repository.book.BookRepository;
+import ru.otus.library.repository.comment.CommentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
+    private final CommentRepository commentRepository;
+
 
     @Autowired
-    public BookServiceImpl(BookRepository bookRepository) {
+    public BookServiceImpl(BookRepository bookRepository, CommentRepository commentRepository) {
         this.bookRepository = bookRepository;
+        this.commentRepository = commentRepository;
     }
 
-    @Transactional
     @Override
-    public BookDto createBook(String bookTitle, List<Long> authorIds, List<Long> genreIds) {
+    public BookDto createBook(String bookTitle, List<String> authorIds, List<String> genreIds) {
         Book book = Book.builder()
                 .title(bookTitle)
-                .authors(buildAuthorList(authorIds))
-                .genres(createGenres(genreIds))
+                .authors(convertToAuthors(authorIds))
+                .genres(convertToGenres(genreIds))
                 .build();
 
-        Book createdBook = bookRepository.saveAndFlush(book);
+        Book createdBook = bookRepository.save(book);
 
         return buildBookDto(createdBook);
     }
 
-    @Transactional
     @Override
-    public void updateBook(Long bookId, String title, List<Long> authorIds, List<Long> genreIds) {
+    public void updateBook(String bookId, String title, List<String> authorIds, List<String> genreIds) {
 
         Book book = Book.builder()
                 .id(bookId)
                 .title(title)
-                .genres(createGenres(genreIds))
-                .authors(buildAuthorList(authorIds))
+                .genres(convertToGenres(genreIds))
+                .authors(convertToAuthors(authorIds))
                 .build();
 
-        bookRepository.saveAndFlush(book);
+        bookRepository.save(book);
     }
 
-    @Transactional
     @Override
-    public void deleteBook(Long id) {
+    public void deleteBook(String id) {
+        commentRepository.deleteAllByBookId(id);
         bookRepository.deleteById(id);
     }
 
-    @Transactional(readOnly = true)
     @Override
-    public BookDto getById(Long id) {
-        Book book = bookRepository.getById(id);
-        return buildBookDto(book);
+    public BookDto getById(String id) {
+        Optional<Book> bookOptional = bookRepository.findById(id);
+        if (bookOptional.isPresent()) {
+            return buildBookDto(bookOptional.get());
+        }
+        return new BookDto();
     }
 
-    @Transactional(readOnly = true)
     @Override
-    public List<BookDto> getByAuthorId(Long authorId) {
+    public List<BookDto> getByAuthorId(String authorId) {
         List<Book> books = bookRepository.getByAuthorsId(authorId);
         return buildBookDtoList(books);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<BookDto> getAll() {
         List<Book> books = bookRepository.findAll();
         return buildBookDtoList(books);
     }
 
-    private List<Genre> createGenres(List<Long> genreIds) {
+    private List<Genre> convertToGenres(List<String> genreIds) {
         List<Genre> genres = new ArrayList<>();
-        for (Long genreId : genreIds) {
-            Genre genre = Genre.builder().id(genreId).build();
-            genres.add(genre);
+        if (CollectionUtils.isEmpty(genreIds)) {
+            return genres;
         }
+
+        for (String genreId : genreIds) {
+            genres.add(new Genre(genreId));
+        }
+
         return genres;
     }
 
-    private List<Author> buildAuthorList(List<Long> authorIds) {
+    private List<Author> convertToAuthors(List<String> authorIds) {
         List<Author> authors = new ArrayList<>();
 
-        for (Long authorId : authorIds) {
-            Author author = Author.builder().id(authorId).build();
-            authors.add(author);
+        if (CollectionUtils.isEmpty(authorIds)) {
+            return authors;
+        }
+        for (String authorId : authorIds) {
+            authors.add(new Author(authorId));
         }
         return authors;
     }

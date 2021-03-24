@@ -5,15 +5,15 @@ import ru.otus.library.domain.dto.BookDto;
 import java.util.List;
 
 public interface BookService {
-    BookDto createBook(String bookTitle, List<Long> authorIds, List<Long> genreIds);
+    BookDto createBook(String bookTitle, List<String> authorIds, List<String> genreIds);
 
-    void updateBook(Long bookId, String title, List<Long> authorIds, List<Long> genreIds);
+    void updateBook(String bookId, String title, List<String> authorIds, List<String> genreIds);
 
-    void deleteBook(Long id);
+    void deleteBook(String id);
 
-    BookDto getById(Long id);
+    BookDto getById(String id);
 
-    List<BookDto> getByAuthorId(Long authorId);
+    List<BookDto> getByAuthorId(String authorId);
 
     List<BookDto> getAll();
 }

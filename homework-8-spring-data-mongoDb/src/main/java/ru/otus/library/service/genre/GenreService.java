@@ -7,11 +7,11 @@ import java.util.List;
 public interface GenreService {
     GenreDto createGenre(String name);
 
-    void updateGenre(Long genreId, String name);
+    void updateGenre(String genreId, String name);
 
-    void deleteGenre(Long genreId);
+    void deleteGenre(String genreId);
 
-    GenreDto getGenre(Long genreId);
+    GenreDto getGenre(String genreId);
 
     List<GenreDto> getAllGenres();
 }

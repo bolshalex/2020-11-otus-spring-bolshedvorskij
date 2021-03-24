@@ -29,20 +29,20 @@ public class GenreShell {
     }
 
     @ShellMethod(value = "update genre", key = {"updateGenre", "ug"}, prefix = "-")
-    public String updateGenre(@ShellOption Long id,
+    public String updateGenre(@ShellOption String id,
                               @ShellOption({"-n"}) String name) {
         genreService.updateGenre(id, name);
         return "Genre updated";
     }
 
     @ShellMethod(value = "delete genre", key = {"dg", "delGenre"}, prefix = "-")
-    public String deleteGenre(@ShellOption Long id) {
+    public String deleteGenre(@ShellOption String id) {
         genreService.deleteGenre(id);
         return "genre deleted";
     }
 
     @ShellMethod(value = "get genre", key = "getGenre", prefix = "-")
-    public String getGenre(@ShellOption Long id) {
+    public String getGenre(@ShellOption String id) {
         GenreDto genre = genreService.getGenre(id);
         return jsonFormatter.format(genre);
     }

@@ -1,16 +1,14 @@
 package ru.otus.library.repository.comment;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import ru.otus.library.domain.entity.BookComment;
 
 import java.util.List;
 
-public interface CommentRepository extends JpaRepository<BookComment, Long> {
+public interface CommentRepository extends CrudRepository<BookComment, String> {
 
+    List<BookComment> getByBookId(String bookId);
 
-    BookComment getById(Long id);
+    void deleteAllByBookId(String bookId);
 
-    List<BookComment> getByBookId(Long bookId);
-
-    void deleteById(Long id);
 }

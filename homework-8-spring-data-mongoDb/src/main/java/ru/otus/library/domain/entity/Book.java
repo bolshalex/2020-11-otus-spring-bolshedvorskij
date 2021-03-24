@@ -1,40 +1,34 @@
 package ru.otus.library.domain.entity;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "books")
+@Document(collection = "books")
 public class Book {
+    @SerializedName("_id")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "title")
+    private String id;
+
+    @Field(name = "title")
     private String title;
 
-    @Fetch(FetchMode.SELECT)
-    @BatchSize(size = 20)
-    @ManyToMany(targetEntity = Author.class, fetch = FetchType.EAGER, mappedBy = "books")
+    @Field(name = "authors")
+    @DBRef
     private List<Author> authors;
 
-
-    @Fetch(FetchMode.SELECT)
-    @BatchSize(size = 20)
-    @ManyToMany(targetEntity = Genre.class, fetch = FetchType.LAZY)
-    @JoinTable(name = "book_genres",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    @DBRef
     private List<Genre> genres;
 }

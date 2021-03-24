@@ -27,36 +27,39 @@ public class BookShell {
     public String createBook(@ShellOption({"-t"}) String title,
                              @ShellOption(value = {"-a"}, defaultValue = ShellOption.NULL) String authorIds,
                              @ShellOption(value = {"-g"}, defaultValue = ShellOption.NULL) String genreIds) {
-        BookDto book = bookService.createBook(title, StringCollection.splitLong(authorIds), StringCollection.splitLong(genreIds));
+        BookDto book = bookService.createBook(title,
+                StringCollection.splitString(authorIds),
+                StringCollection.splitString(genreIds));
+
         return jsonFormatter.format(book);
     }
 
     @ShellMethod(value = "update book info", key = {"ub", "updateBook"})
-    public String updateBook(@ShellOption(value = {"-id"}) Long bookId,
+    public String updateBook(@ShellOption(value = {"-id"}) String bookId,
                              @ShellOption(value = {"-t"}) String title,
                              @ShellOption(value = {"-a"}, defaultValue = ShellOption.NULL) String authorIds,
                              @ShellOption(value = {"-g"}, defaultValue = ShellOption.NULL) String genresIds) {
         bookService.updateBook(bookId,
                 title,
-                StringCollection.splitLong(authorIds),
-                StringCollection.splitLong(genresIds));
+                StringCollection.splitString(authorIds),
+                StringCollection.splitString(genresIds));
         return "Book updated";
     }
 
     @ShellMethod(value = "delete book", key = {"delBook"})
-    public String deleteBook(@ShellOption(value = {"-id"}) Long bookId) {
+    public String deleteBook(@ShellOption(value = {"-id"}) String bookId) {
         bookService.deleteBook(bookId);
         return "Book deleted";
     }
 
     @ShellMethod(value = "get book", key = {"getBook"})
-    public String getBook(@ShellOption(value = {"-id"}) Long bookId) {
+    public String getBook(@ShellOption(value = {"-id"}) String bookId) {
         BookDto book = bookService.getById(bookId);
         return jsonFormatter.format(book);
     }
 
     @ShellMethod(value = "get author's books", key = {"getAuthorBooks"})
-    public String getAuthorBooks(@ShellOption(value = {"-id"}) Long authorId) {
+    public String getAuthorBooks(@ShellOption(value = {"-id"}) String authorId) {
         List<BookDto> books = bookService.getByAuthorId(authorId);
         return jsonFormatter.format(books);
     }

@@ -1,34 +1,28 @@
 package ru.otus.library.domain.entity;
 
-import lombok.*;
-
-import javax.persistence.*;
-import java.util.List;
+import com.google.gson.annotations.SerializedName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = "books")
-@EqualsAndHashCode(exclude = "books")
-@Entity
-@Table(name = "authors")
+@Document(collection = "authors")
 public class Author {
+    @SerializedName("_id")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(name = "name")
+    @Field(name = "name")
     private String name;
 
-    @ManyToMany(targetEntity = Book.class, fetch = FetchType.LAZY)
-    @JoinTable(name = "author_books",
-            joinColumns = @JoinColumn(name = "author_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id"))
-    private List<Book> books;
-
-    public Author(Long id, String name) {
-        this.id = id;
-        this.name = name;
+    public Author(String authorId) {
+        id = authorId;
     }
 }

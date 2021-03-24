@@ -1,20 +1,20 @@
 package ru.otus.library.repository.genre;
 
+import com.github.cloudyrock.spring.v5.EnableMongock;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import ru.otus.library.domain.entity.Genre;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @DisplayName("Тест для работы с жанрами")
-@DataJpaTest
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
+@DataMongoTest
+@EnableMongock
 class JpaGenreRepositoryTest {
 
     @Autowired
@@ -24,17 +24,17 @@ class JpaGenreRepositoryTest {
     @Test
     void shouldCreateGenre() {
         Genre genre = Genre.builder().name("Science fiction").build();
-        Genre createdGenre = genreRepository.saveAndFlush(genre);
+        Genre createdGenre = genreRepository.save(genre);
         Assertions.assertThat(genre.getName()).isEqualTo(createdGenre.getName());
     }
 
     @DisplayName("должен обновлять жанр")
     @Test
     void shouldUpdateGenre() {
-        Genre genre = new Genre(2L, "Science");
-        genreRepository.saveAndFlush(genre);
-        Genre updatedGenre = genreRepository.getById(2L);
-        Assertions.assertThat(genre).isEqualTo(updatedGenre);
+        Genre genre = new Genre("2", "Science");
+        genreRepository.save(genre);
+        Optional<Genre> updatedGenre = genreRepository.findById("2");
+        Assertions.assertThat(genre).isEqualTo(updatedGenre.get());
 
     }
 
@@ -42,7 +42,7 @@ class JpaGenreRepositoryTest {
     @Test
     void shouldDeleteGenre() {
         List<Genre> beforeGenres = genreRepository.findAll();
-        genreRepository.deleteById(1L);
+        genreRepository.deleteById("1");
         List<Genre> afterGenres = genreRepository.findAll();
         Assertions.assertThat(beforeGenres.size() - 1).isEqualTo(afterGenres.size());
     }
@@ -50,18 +50,18 @@ class JpaGenreRepositoryTest {
     @DisplayName("должен находить жанр по id")
     @Test
     void shouldGetGenreById() {
-        Genre expectedGenre = new Genre(1L, "Programming");
+        Genre expectedGenre = new Genre("1", "Programming");
 
-        Genre actualGenre = genreRepository.getById(expectedGenre.getId());
-        Assertions.assertThat(expectedGenre).isEqualTo(actualGenre);
+        Optional<Genre> actualGenre = genreRepository.findById(expectedGenre.getId());
+        Assertions.assertThat(expectedGenre).isEqualTo(actualGenre.get());
     }
 
     @DisplayName("должен получать все жанры")
     @Test
     void getAll() {
         List<Genre> expectedGenres = new ArrayList<>();
-        expectedGenres.add(new Genre(1L, "Programming"));
-        expectedGenres.add(new Genre(2L, "Computer Science"));
+        expectedGenres.add(new Genre("1", "Programming"));
+        expectedGenres.add(new Genre("2", "Computer Science"));
 
         List<Genre> actualGenres = genreRepository.findAll();
         Assertions.assertThat(expectedGenres).containsExactlyInAnyOrderElementsOf(actualGenres);
