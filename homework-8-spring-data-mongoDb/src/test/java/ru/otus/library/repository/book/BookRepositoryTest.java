@@ -11,10 +11,8 @@ import ru.otus.library.domain.entity.Author;
 import ru.otus.library.domain.entity.Book;
 import ru.otus.library.domain.entity.Genre;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @DisplayName("Тест для работы с книгами")
 @DataMongoTest
@@ -109,6 +107,46 @@ class BookRepositoryTest {
         expectedBooks.add(secondBook);
 
         Assertions.assertThat(expectedBooks).isEqualTo(actualBooks);
+    }
+
+    @DisplayName("должен добавлять добавлять автора к книгам")
+    @Test
+    void shouldPutAuthorToBooks() {
+        Author author = new Author("2");
+        String[] bookIds = new String[]{"1", "2"};
+        List<Book> books = Arrays.stream(bookIds)
+                .map(Book::new)
+                .collect(Collectors.toList());
+
+        List<Book> originAuthorBooks = bookRepository.getByAuthorsId(author.getId());
+
+        bookRepository.putAuthorToBooks(author, books);
+
+        List<Book> actualAuthorBooks = bookRepository.getByAuthorsId(author.getId());
+
+        List<Author> authors =
+                Arrays.asList(new Author("1", "Eric Matthes"), new Author("2", "Paul Graham"));
+
+        List<Genre> genres = Collections.singletonList(new Genre("1", "Programming"));
+        Book firstBook = Book.builder()
+                .id("1")
+                .authors(authors)
+                .genres(genres)
+                .title("Python Crash Course, 2nd Edition: A Hands-On, Project-Based Introduction to Programming")
+                .build();
+        Book secondBook = Book.builder()
+                .id("2")
+                .authors(authors)
+                .genres(genres)
+                .title("Python Flash Cards: Syntax, Concepts, and Examples Cards")
+                .build();
+
+        List<Book> expectedAuthorBooks = new ArrayList<>(originAuthorBooks);
+        expectedAuthorBooks.add(firstBook);
+        expectedAuthorBooks.add(secondBook);
+
+        Assertions.assertThat(expectedAuthorBooks).containsExactlyInAnyOrderElementsOf(actualAuthorBooks);
+
     }
 
 }

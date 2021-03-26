@@ -31,4 +31,8 @@ public class Book {
 
     @DBRef
     private List<Genre> genres;
+
+    public Book(String id) {
+        this.id = id;
+    }
 }
