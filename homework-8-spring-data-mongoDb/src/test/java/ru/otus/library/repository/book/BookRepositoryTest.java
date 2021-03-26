@@ -110,6 +110,7 @@ class BookRepositoryTest {
     }
 
     @DisplayName("должен добавлять добавлять автора к книгам")
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
     void shouldPutAuthorToBooks() {
         Author author = new Author("2");
