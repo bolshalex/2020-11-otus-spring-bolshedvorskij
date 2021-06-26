@@ -36,8 +36,9 @@ public class AuthorController {
         authorService.createAuthor(author);
     }
 
-    @PutMapping("/api/authors")
-    public void updateAuthor(@RequestBody AuthorDto author) {
+    @PutMapping("/api/authors/{id}")
+    public void updateAuthor(@PathVariable("id") String id, @RequestBody AuthorDto author) {
+        author.setId(id);
         authorService.updateAuthor(author);
     }
 

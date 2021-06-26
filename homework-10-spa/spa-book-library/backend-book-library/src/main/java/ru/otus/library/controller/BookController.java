@@ -31,8 +31,9 @@ public class BookController {
         bookService.createBook(book);
     }
 
-    @PutMapping("/api/books")
-    public void updateBook(@RequestBody BookDto book) {
+    @PutMapping("/api/books/{id}")
+    public void updateBook(@PathVariable("id") String id, @RequestBody BookDto book) {
+        book.setBookId(id);
         bookService.updateBook(book);
     }
 

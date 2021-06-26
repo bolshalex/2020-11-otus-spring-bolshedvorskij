@@ -33,8 +33,9 @@ public class GenreController {
         genreService.createGenre(genre);
     }
 
-    @PutMapping("/api/genres")
-    public void updateGenre(@RequestBody GenreDto genre) {
+    @PutMapping("/api/genres/{id}")
+    public void updateGenre(@PathVariable("id") String id, @RequestBody GenreDto genre) {
+        genre.setId(id);
         genreService.updateGenre(genre);
     }
 

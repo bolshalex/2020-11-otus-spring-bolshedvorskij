@@ -53,7 +53,7 @@
                 this.author = author
             },
 
-            saveAuthor(author) {
+            async saveAuthor(author) {
                 if (author.id) {
                     const requestOptions = {
                         method: 'PUT',
@@ -62,8 +62,9 @@
                             'Content-Type': 'application/json'
                         }
                     }
-                    fetch("/api/authors", requestOptions)
-                    console.log("Сохранение автора " + requestOptions.body)
+                    await fetch("/api/authors/" + author.id, requestOptions)
+                        .catch(reason => alert("произошла ошибка при изменении автора: ") + reason)
+
                 } else {
                     const requestOptions = {
                         method: 'POST',
@@ -72,16 +73,17 @@
                             'Content-Type': 'application/json'
                         }
                     }
-                    fetch("/api/authors", requestOptions)
-                    console.log("Добавление автора " + requestOptions.body)
+                    await fetch("/api/authors", requestOptions)
+                        .catch(reason => alert("произошла ошибка при добавлении автора: " + reason))
                 }
                 this.author = null
+                this.loadAuthors()
             },
             addAuthor() {
                 this.author = {id: null, name: ''}
             },
-            deleteAuthor(author) {
-                fetch("/api/authors/" + author.id, {method: 'DELETE'})
+            async deleteAuthor(author) {
+                await fetch("/api/authors/" + author.id, {method: 'DELETE'})
                     .catch(reason => console.log("Error delete by author.id= " + author.id + " " + reason))
                 this.loadAuthors()
 

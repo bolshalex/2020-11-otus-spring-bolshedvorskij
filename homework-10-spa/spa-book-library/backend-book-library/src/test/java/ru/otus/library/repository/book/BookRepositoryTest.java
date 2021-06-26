@@ -50,6 +50,7 @@ class BookRepositoryTest {
         Assertions.assertThat(book).isEqualTo(updatedBook.get());
     }
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @DisplayName("должен удалять книгу")
     @Test
     void shouldDeleteBook() {

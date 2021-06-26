@@ -46,8 +46,7 @@
             }
         },
         methods: {
-            saveBook(book) {
-                console.log("Сохранение/добавление книги: " + JSON.stringify(book))
+            async saveBook(book) {
                 if (book.bookId) {
                     const requestOptions = {
                         method: 'PUT',
@@ -56,8 +55,9 @@
                             'Content-Type': 'application/json'
                         }
                     }
-                    fetch("/api/books", requestOptions)
-                    console.log("Сохранение книги " + requestOptions.body)
+                    await fetch("/api/books/" + book.bookId, requestOptions)
+                        .catch(reason => alert("произошла ошибка при изменении книги " + reason))
+
                 } else {
                     const requestOptions = {
                         method: 'POST',
@@ -66,8 +66,8 @@
                             'Content-Type': 'application/json'
                         }
                     }
-                    fetch("/api/books", requestOptions)
-                    console.log("Добавление книги " + requestOptions.body)
+                    await fetch("/api/books", requestOptions)
+                        .catch(reason => alert("произошла ошибка при добавлении книги " + reason))
                 }
                 this.isEditBook = false;
                 this.editableBook = null
@@ -82,9 +82,10 @@
                 this.editableBook = book;
             },
 
-            deleteBook(book) {
-                fetch("/api/books/" + book.bookId, {method: 'DELETE'})
-                    .catch(reason => console.log("Error delete by book.id= " + book.id + " " + reason))
+            async deleteBook(book) {
+                await fetch("/api/books/" + book.bookId, {method: 'DELETE'})
+                    .catch(reason => console.log("произошла ошибка при удалении книги с id: " + book.id + " " + reason))
+
                 this.loadBooks()
             },
 
