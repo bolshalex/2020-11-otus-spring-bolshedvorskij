@@ -30,6 +30,7 @@ class BookRepositoryTest {
         Assertions.assertThat(book.getTitle()).isEqualTo(createdBook.getTitle());
     }
 
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @DisplayName("должен обновлять книгу")
     @Test
     void shouldUpdateBook() {
@@ -57,7 +58,12 @@ class BookRepositoryTest {
         List<Book> beforeBooks = bookRepository.findAll();
         bookRepository.deleteById("4");
         List<Book> afterDeleteBooks = bookRepository.findAll();
-        Assertions.assertThat(beforeBooks.size() - 1).isEqualTo(afterDeleteBooks.size());
+
+        List<String> bookIds = afterDeleteBooks.stream()
+                .map(Book::getId)
+                .collect(Collectors.toList());
+
+        Assertions.assertThat(bookIds).doesNotContain("4");
     }
 
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)

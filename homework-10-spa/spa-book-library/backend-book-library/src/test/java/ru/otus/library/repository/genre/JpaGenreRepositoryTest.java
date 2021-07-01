@@ -15,7 +15,7 @@ import java.util.Optional;
 @DisplayName("Тест для работы с жанрами")
 @DataMongoTest
 @EnableMongock
-class JpaGenreRepositoryTest {
+class GenreRepositoryTest {
 
     @Autowired
     private GenreRepository genreRepository;
@@ -34,7 +34,8 @@ class JpaGenreRepositoryTest {
         Genre genre = new Genre("2", "Science");
         genreRepository.save(genre);
         Optional<Genre> updatedGenre = genreRepository.findById("2");
-        Assertions.assertThat(genre).isEqualTo(updatedGenre.get());
+
+        Assertions.assertThat(updatedGenre.orElseThrow()).isEqualTo(genre);
 
     }
 
